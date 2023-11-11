@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "init.h": "c"
+        "init.h": "c",
+        "cstdlib": "c",
+        "math_helper.h": "c",
+        "mainloop.h": "c"
     }
 }
