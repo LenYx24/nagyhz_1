@@ -3,6 +3,8 @@
         "init.h": "c",
         "cstdlib": "c",
         "math_helper.h": "c",
-        "mainloop.h": "c"
+        "mainloop.h": "c",
+        "*.tcc": "c",
+        "stdbool.h": "c"
     }
 }

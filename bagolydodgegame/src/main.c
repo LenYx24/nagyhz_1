@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "../lib/debugmalloc.h"
 
@@ -12,7 +13,7 @@
 int main(int argc, char *argv[]) {
   Size windowsize = {1280, 960};
   init(windowsize, "bagoly jatek");
-
+  
   loop();
 
   rendererquit();

@@ -1,13 +1,14 @@
 #include "../include/mainloop.h"
+
 void loop(){
     State state = MENU;
     while (state != QUIT) {
-    Event *event = NULL;
-    waitevent(event);
+    Event e;
+    SDL_WaitEvent(&e.event);
     if (state == MENU) {
-      menu(event, &state);
+      menu(&e, &state);
     } else {
-      game(event, &state);
+      game(&e, &state);
     }
   }
 }

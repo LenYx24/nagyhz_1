@@ -6,20 +6,23 @@
 #include <SDL2/SDL_render.h>
 #include "math_helper.h"
 #include "color.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 typedef struct Texture {
     SDL_Texture *t;
 } Texture;
 
 typedef struct Event {
-    SDL_Event *event;
+    SDL_Event event;
 } Event;
 
 typedef struct Timer {
     SDL_TimerID id;
 } Timer;
 
-void createwindow(Size windowsize, char* title);
+void createwindow(Size windowsize, char *title);
 void rendererquit();
 
 Texture loadimage(char *pathname);

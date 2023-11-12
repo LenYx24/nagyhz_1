@@ -8,21 +8,21 @@ void createwindow(Size windowsize, char *title) {
     SDL_Log("Nem indithato az SDL: %s", SDL_GetError());
     exit(1);
   }
-  SDL_Window *w =
+  window =
       SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                        windowsize.width, windowsize.height, 0);
-  if (w == NULL) {
+  if (window == NULL) {
     SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
     exit(1);
   }
-  SDL_Renderer *r = SDL_CreateRenderer(w, -1, SDL_RENDERER_SOFTWARE);
-  if (r == NULL) {
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+  if (renderer == NULL) {
     SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
     exit(1);
   }
-  SDL_RenderClear(r);
-  window = w;
-  renderer = r;
+  SDL_RenderClear(renderer);
+  printf("w: %p\n",&window);
+  printf("r: %p\n",&renderer);
 }
 void rendererquit() { SDL_Quit(); }
 
