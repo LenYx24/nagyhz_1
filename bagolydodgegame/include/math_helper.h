@@ -1,15 +1,19 @@
 #ifndef MATH_HELPER_H
 #define MATH_HELPER_H
 
-
 #include <stdbool.h>
-typedef struct Point {
+#include <SDL2/SDL.h>
+
+typedef struct Point
+{
   double x, y;
 } Point;
-typedef struct Size {
+typedef struct Size
+{
   int width, height;
 } Size;
-typedef struct Rect{
+typedef struct Rect
+{
   Point pos;
   Size size;
 } Rect;

@@ -1,7 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
-#endif
 #include "render.h"
 #include "entity.h"
 #include "state.h"
-void game(Event *e, State *state);
+#include <SDL2/SDL.h>
+void game(SDL_Event *e, State *state);
+#endif

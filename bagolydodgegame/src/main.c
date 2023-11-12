@@ -10,10 +10,11 @@
 #include "../include/render.h"
 #include "../include/mainloop.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   Size windowsize = {1280, 960};
   init(windowsize, "bagoly jatek");
-  
+
   loop();
 
   rendererquit();

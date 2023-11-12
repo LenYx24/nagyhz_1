@@ -1,7 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
-#endif
 #include "render.h"
 #include "state.h"
 #include <stdio.h>
-void menu(Event *e, State *state);
+#include <SDL2/SDL.h>
+void menu(SDL_Event *e, State *state);
+#endif

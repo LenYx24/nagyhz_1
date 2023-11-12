@@ -2,11 +2,13 @@
 #define ENTITY_H
 #include "math_helper.h"
 #include "render.h"
-struct Entity {
+#include <SDL2/SDL_image.h>
+struct Entity
+{
   Point point;
   Point dest;
   Size size;
-  Texture texture;
+  SDL_Texture *texture;
 };
 typedef struct Entity Fireball;
 typedef struct Entity Player;

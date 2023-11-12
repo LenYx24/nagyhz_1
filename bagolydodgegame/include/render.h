@@ -10,34 +10,17 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct Texture {
-    SDL_Texture *t;
-} Texture;
+SDL_Texture *loadimage(char *pathname);
+void renderimage(SDL_Texture *t, Rect *dest);
+void destroytexture(SDL_Texture *t);
 
-typedef struct Event {
-    SDL_Event event;
-} Event;
-
-typedef struct Timer {
-    SDL_TimerID id;
-} Timer;
+void createuserevent();
 
 void createwindow(Size windowsize, char *title);
 void rendererquit();
 
-Texture loadimage(char *pathname);
-void renderimage(Texture *t, Rect *dest);
-void destroytexture(Texture *t);
-
 void renderbox(Point topleft, Point downright, Color color);
-void rendertext(Point pos,Color color, char*text);
-
-void waitevent(Event *e);
+void rendertext(Point pos, Color color, char *text);
 
 void renderupdate();
-
-Timer createtimer(Uint32 ms, void *callback);
-void removetimer(Timer *t);
-
-void createuserevent();
 #endif
