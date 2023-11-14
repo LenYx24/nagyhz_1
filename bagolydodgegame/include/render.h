@@ -5,7 +5,6 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_render.h>
 #include "math_helper.h"
-
 #include <stdlib.h>
 
 SDL_Texture *loadimage(char *pathname);

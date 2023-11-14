@@ -33,5 +33,6 @@ int twopointsdistance(Point p1, Point p2);
 Vector2 vectorfromtwopoints(Point start, Point end);
 Point gettopleftpoint(Point pos, Size size);
 Point addvectortopoint(Point p, Vector2 v);
+Point rectdownrightpoint(Rect rect);
 Vector2 normalizevector(Vector2 v);
 #endif

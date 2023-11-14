@@ -12,7 +12,7 @@ typedef struct Player
   Size imgsize;
   int hitboxradius;
   SDL_Texture *texture;
-  int speed;
+  double speed;
 } Player;
 
 typedef struct Fireball
@@ -22,7 +22,7 @@ typedef struct Fireball
   Size imgsize;
   int hitboxradius;
   SDL_Texture *texture;
-  int speed;
+  double speed;
 } Fireball;
 
 typedef struct Enemy
@@ -32,7 +32,7 @@ typedef struct Enemy
   Size imgsize;
   int hitboxradius;
   SDL_Texture *texture;
-  int speed;
+  double speed;
 } Enemy;
 
 typedef struct FireballNode

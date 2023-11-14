@@ -57,3 +57,7 @@ Vector2 normalizevector(Vector2 v)
   int distance = sqrt(pow(v.x, 2) + pow(v.y, 2));
   return (Vector2){.x = v.x / distance, .y = v.y / distance};
 }
+Point rectdownrightpoint(Rect rect)
+{
+  return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};
+}
