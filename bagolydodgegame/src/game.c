@@ -18,7 +18,12 @@ void game(SDL_Event *e, State *state)
                    .hitboxradius = 40,
                    .destination = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
                    .speed = 2.7f,
-                   .texture = loadimage("resources/player.png")};
+                   .texture = loadimage("resources/player.png"),
+                   .flash = (Flash){
+                       .cooldown = 4.0f,
+                       .cdcounter = 4.0f,
+                       .oncd = false,
+                       .range = 500.0f}};
 
   FireballNode *fireballs = NULL;
 
@@ -34,7 +39,6 @@ void game(SDL_Event *e, State *state)
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
   renderupdate();
-
   while (*state == GAME)
   {
     SDL_WaitEvent(e);
@@ -43,10 +47,25 @@ void game(SDL_Event *e, State *state)
     case SDL_MOUSEBUTTONDOWN:
       if (e->button.button == SDL_BUTTON_RIGHT)
         player.destination = (Point){.x = e->button.x, .y = e->button.y};
+
+      break;
+    case SDL_KEYDOWN:
+      switch (e->key.keysym.sym)
+      {
+      case SDLK_d:
+      {
+        player.flash.oncd = true;
+        playerflash(&player);
+        break;
+      }
+      }
+
       break;
 
     case SDL_USEREVENT:
       renderimagerect(background, &backgrounddest); // háttér újratöltése
+
+      // új elemek létrehozása
 
       fireballspawncounter++;
       if (fireballspawncounter == fireballcap)
@@ -57,15 +76,31 @@ void game(SDL_Event *e, State *state)
         fireballs = spawnfireball(fireballs, fireballtexture, player.position, fireballspeed);
       }
 
+      // mozgatás
+
       moveplayer(&player);
       movefireballs(fireballs);
 
+      // ütközések
+
       if (checkcollisioncircles(&player, fireballs))
         *state = MENU;
+
+      // játékos képességek
+      if (player.flash.oncd)
+      {
+        if (player.flash.cdcounter >= 0.0f)
+          player.flash.cdcounter -= ms / 100.0;
+        else
+        {
+          player.flash.cdcounter = player.flash.cooldown;
+          player.flash.oncd = false;
+        }
+      }
+      showcooldowns(player.flash.oncd);
       // időmérés
-      char t[30];
-      sprintf(t, "masodpercek: %lf", seconds);
-      rendertext((Point){WINDOWWIDTH - 200, 10}, (SDL_Color){255, 255, 255, 255}, t);
+
+      showseconds(seconds);
       seconds += ms / 100.0; // 10ms * 100ms = 1s
 
       renderupdate();

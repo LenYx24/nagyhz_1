@@ -23,7 +23,6 @@ void loop()
       else
       {
         game(&e, &state);
-        SDL_Log("gameutan");
       }
     }
   }

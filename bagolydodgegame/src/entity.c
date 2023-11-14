@@ -65,6 +65,22 @@ bool checkcollisioncircles(Player *player, FireballNode *fireballs)
     }
     return false;
 }
+void playerflash(Player *player)
+{
+    int x, y;
+    SDL_GetRelativeMouseState(&x, &y);
+    Point mousepos = (Point){x, y};
+    int distance = twopointsdistance(player->position, mousepos);
+    if (distance >= player->flash.range)
+    {
+        // közelebb kell hozni a pontot
+    }
+    else
+    {
+        player->position = mousepos;
+    }
+}
+
 // bool checkcollisionrect(Player *player, FireballNode *fireballs)
 // {
 //     for (FireballNode *current = fireballs; current != NULL; current = current->next)
