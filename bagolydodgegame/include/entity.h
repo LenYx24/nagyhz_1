@@ -44,7 +44,7 @@ typedef struct FireballNode
 void moveplayer(Player *player);
 
 void movefireballs(FireballNode *fireballs);
-FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos);
+FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freefireballs(FireballNode *fireballs);
 
 bool checkcollisioncircles(Player *player, FireballNode *fireballs);

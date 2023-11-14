@@ -25,8 +25,6 @@ void createwindow(Size windowsize, char *title)
     exit(1);
   }
   SDL_RenderClear(renderer);
-  printf("w: %p\n", &window);
-  printf("r: %p\n", &renderer);
 }
 void rendererquit() { SDL_Quit(); }
 

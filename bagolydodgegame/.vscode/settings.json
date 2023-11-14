@@ -10,6 +10,7 @@
         "list": "c",
         "render.h": "c",
         "cmath": "c",
-        "valarray": "c"
+        "valarray": "c",
+        "source_location": "c"
     }
 }

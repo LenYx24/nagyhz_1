@@ -4,7 +4,7 @@ void moveplayer(Player *player)
 {
     int distance = twopointsdistance(player->position, player->destination);
     Vector2 destposvect = normalizevector(vectorfromtwopoints(player->position, player->destination));
-    int speed = 3;
+    double speed = player->speed;
     if (distance > speed)
     {
         player->position.x += speed * destposvect.x;
@@ -18,16 +18,17 @@ void movefireballs(FireballNode *fireballs)
 {
     for (FireballNode *current = fireballs; current != NULL; current = current->next)
     {
-        int speed = 5;
-        Vector2 v = {.x = current->fireball.direction.x * speed, .y = current->fireball.direction.y * speed};
-        current->fireball.position = addvectortopoint(current->fireball.position, v);
-        Rect fireballimgdest = {gettopleftpoint(current->fireball.position, current->fireball.imgsize),
-                                current->fireball.imgsize};
-        renderimagerect(current->fireball.texture, &fireballimgdest);
+        Fireball *f = &current->fireball;
+        int speed = f->speed;
+        Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
+        f->position = addvectortopoint(f->position, v);
+        Rect fireballimgdest = {gettopleftpoint(f->position, f->imgsize),
+                                f->imgsize};
+        renderimagerect(f->texture, &fireballimgdest);
     }
 }
 
-FireballNode *spawnfireball(FireballNode *list, SDL_Texture *ftexture, Point playerpos)
+FireballNode *spawnfireball(FireballNode *list, SDL_Texture *ftexture, Point playerpos, double speed)
 {
     FireballNode *newfireball = (FireballNode *)malloc(sizeof(FireballNode));
     newfireball->next = list;
@@ -39,7 +40,8 @@ FireballNode *spawnfireball(FireballNode *list, SDL_Texture *ftexture, Point pla
         .direction = dest,
         .hitboxradius = 35,
         .imgsize = {70, 70},
-        .texture = ftexture};
+        .texture = ftexture,
+        .speed = speed};
     newfireball->fireball = e;
     return newfireball;
 }
@@ -56,8 +58,9 @@ bool checkcollisioncircles(Player *player, FireballNode *fireballs)
 {
     for (FireballNode *current = fireballs; current != NULL; current = current->next)
     {
-        int distance = twopointsdistance(current->fireball.position, player->position);
-        if (distance <= current->fireball.hitboxradius + player->hitboxradius)
+        Fireball *f = &current->fireball;
+        int distance = twopointsdistance(f->position, player->position);
+        if (distance <= f->hitboxradius + player->hitboxradius)
             return true;
     }
     return false;
