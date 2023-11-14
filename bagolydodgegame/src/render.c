@@ -40,7 +40,7 @@ SDL_Texture *loadimage(char *pathname)
   }
   return img;
 }
-void renderimage(SDL_Texture *t, Rect *dest)
+void renderimagerect(SDL_Texture *t, Rect *dest)
 {
   SDL_Rect r = {dest->pos.x, dest->pos.y, dest->size.width, dest->size.height};
   SDL_RenderCopy(renderer, t, NULL, &r);

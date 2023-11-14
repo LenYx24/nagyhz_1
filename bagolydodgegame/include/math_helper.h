@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "macros.h"
 
@@ -28,4 +29,9 @@ typedef struct Rect
 Point substract(Point p1, Point p2);
 bool withinbounds(Rect r, Point p);
 Point randomspawnpoint();
+int twopointsdistance(Point p1, Point p2);
+Vector2 vectorfromtwopoints(Point start, Point end);
+Point gettopleftpoint(Point pos, Size size);
+Point addvectortopoint(Point p, Vector2 v);
+Vector2 normalizevector(Vector2 v);
 #endif

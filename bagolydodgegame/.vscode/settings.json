@@ -6,6 +6,10 @@
         "mainloop.h": "c",
         "*.tcc": "c",
         "stdbool.h": "c",
-        "ios": "c"
+        "ios": "c",
+        "list": "c",
+        "render.h": "c",
+        "cmath": "c",
+        "valarray": "c"
     }
 }

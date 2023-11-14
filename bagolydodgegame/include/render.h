@@ -5,12 +5,11 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_render.h>
 #include "math_helper.h"
-#include <stdio.h>
+
 #include <stdlib.h>
-#include <math.h>
 
 SDL_Texture *loadimage(char *pathname);
-void renderimage(SDL_Texture *t, Rect *dest);
+void renderimagerect(SDL_Texture *t, Rect *dest);
 void destroytexture(SDL_Texture *t);
 
 void createuserevent();

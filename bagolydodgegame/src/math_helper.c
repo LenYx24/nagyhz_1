@@ -17,28 +17,43 @@ bool withinbounds(Rect r, Point p)
 Point randomspawnpoint()
 {
   Point p;
-  switch (rand() % 4)
-  {
-  case 0:
-  {
-    p.x = 0;
-    break;
+  if (rand() % 2)
+  { // bal vagy jobb oldalt
+    p.y = rand() % WINDOWHEIGHT;
+    if (rand() % 2)
+      p.x = 0; // bal
+    else
+      p.x = WINDOWWIDTH; // jobb
   }
-  case 1:
-  {
-    p.x = WINDOWWIDTH;
-    break;
-  }
-  case 2:
-  {
-    p.y = 0;
-    break;
-  }
-  case 3:
-  {
-    p.y = WINDOWHEIGHT;
-    break;
-  }
+  else
+  { // fent vagy lent
+    p.x = rand() % WINDOWWIDTH;
+    if (rand() % 2)
+      p.y = 0; // fent
+    else
+      p.y = WINDOWHEIGHT; // lent
   }
   return p;
+}
+
+int twopointsdistance(Point p1, Point p2)
+{
+  return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+Vector2 vectorfromtwopoints(Point start, Point end)
+{
+  return (Vector2){.x = end.x - start.x, .y = end.y - start.y};
+}
+Point gettopleftpoint(Point pos, Size size)
+{
+  return (Point){pos.x - size.width / 2, pos.y - size.height / 2};
+}
+Point addvectortopoint(Point p, Vector2 v)
+{
+  return (Point){.x = p.x + v.x, .y = p.y + v.y};
+}
+Vector2 normalizevector(Vector2 v)
+{
+  int distance = sqrt(pow(v.x, 2) + pow(v.y, 2));
+  return (Vector2){.x = v.x / distance, .y = v.y / distance};
 }

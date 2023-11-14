@@ -11,15 +11,18 @@ void game(SDL_Event *e, State *state)
 {
   int timer = SDL_AddTimer(10, update, NULL);
   Rect dest = {(Point){0, 0}, (Size){1280, 960}};
-  Player player = {.point = {960, 540},
-                   .size = {100, 100},
+  Player player = {.position = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
+                   .imgsize = {100, 100},
+                   .hitboxradius = 40,
+                   .destination = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
                    .texture = loadimage("resources/infocbagoly.png")};
   FireballNode *fireballs = NULL;
   int fireballspawnms = 0;
-
+  int fireballcap = 100;
+  double seconds = 0.0f;
   SDL_Texture *bg = loadimage("resources/map.png");
 
-  SDL_Texture *fireballtexture = loadimage("resources/map.png");
+  SDL_Texture *fireballtexture = loadimage("resources/fireball.png");
   renderupdate();
   while (*state == GAME)
   {
@@ -29,23 +32,35 @@ void game(SDL_Event *e, State *state)
     case SDL_MOUSEBUTTONDOWN:
       if (e->button.button == SDL_BUTTON_RIGHT)
       {
-        player.dest.x = e->button.x;
-        player.dest.y = e->button.y;
+        player.destination.x = e->button.x;
+        player.destination.y = e->button.y;
       }
       renderupdate();
       break;
 
     case SDL_USEREVENT:
-
-      renderimage(bg, &dest);
-
+      renderimagerect(bg, &dest); // háttér újratöltése
+      seconds += 0.01;
       fireballspawnms += 1;
-      if (fireballspawnms == 100)
+      if (fireballspawnms == fireballcap)
       {
         fireballspawnms = 0;
-        spawnfireball(fireballs, fireballtexture, player.point);
+        if (fireballcap > 30)
+          fireballcap -= 2;
+        fireballs = spawnfireball(fireballs, fireballtexture, player.position);
       }
       moveplayer(&player);
+      movefireballs(fireballs);
+
+      if (checkcollisioncircles(&player, fireballs))
+      {
+        SDL_Log("COLLISION");
+        *state = MENU;
+      }
+      // időmérés
+      char t[10];
+      sprintf(t, "%lf", seconds);
+      rendertext((Point){WINDOWWIDTH - 200, 10}, (SDL_Color){255, 255, 255, 255}, t);
       renderupdate();
       break;
     case SDL_QUIT:
@@ -53,7 +68,7 @@ void game(SDL_Event *e, State *state)
       break;
     }
   }
-
+  freefireballs(fireballs);
   SDL_RemoveTimer(timer);
   destroytexture(bg);
 }
