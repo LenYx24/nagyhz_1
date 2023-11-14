@@ -5,6 +5,7 @@
         "math_helper.h": "c",
         "mainloop.h": "c",
         "*.tcc": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "ios": "c"
     }
 }

@@ -5,7 +5,6 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_render.h>
 #include "math_helper.h"
-#include "color.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -19,8 +18,8 @@ void createuserevent();
 void createwindow(Size windowsize, char *title);
 void rendererquit();
 
-void renderbox(Point topleft, Point downright, Color color);
-void rendertext(Point pos, Color color, char *text);
+void renderbox(Point topleft, Point downright, SDL_Color color);
+void rendertext(Point pos, SDL_Color color, char *text);
 
 void renderupdate();
 #endif

@@ -4,8 +4,9 @@ void loop()
 {
   State state = MENU;
   Uint32 t1, t2 = 0, delta;
-  double fps = 60.0;
+  double fps = 144.0;
   double mindelta = 1000 / fps;
+  SDL_Event e;
   while (state != QUIT)
   {
     t1 = SDL_GetTicks();
@@ -15,9 +16,6 @@ void loop()
     {
       // SDL_Log("fps: %d", 1000 / delta);
       t2 = t1;
-
-      SDL_Event e;
-      SDL_WaitEvent(&e);
       if (state == MENU)
       {
         menu(&e, &state);

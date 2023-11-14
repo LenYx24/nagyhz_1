@@ -13,3 +13,32 @@ bool withinbounds(Rect r, Point p)
   int bottom = top + r.size.height;
   return (left <= p.x && p.x <= right) && (top <= p.y && p.y <= bottom);
 }
+
+Point randomspawnpoint()
+{
+  Point p;
+  switch (rand() % 4)
+  {
+  case 0:
+  {
+    p.x = 0;
+    break;
+  }
+  case 1:
+  {
+    p.x = WINDOWWIDTH;
+    break;
+  }
+  case 2:
+  {
+    p.y = 0;
+    break;
+  }
+  case 3:
+  {
+    p.y = WINDOWHEIGHT;
+    break;
+  }
+  }
+  return p;
+}

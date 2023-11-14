@@ -2,20 +2,25 @@
 
 void menu(SDL_Event *e, State *state)
 {
-  renderbox((Point){20, 20}, (Point){200, 50}, (Color){200, 0, 0, 255});
-  rendertext((Point){100, 30}, (Color){255, 255, 255, 255}, "Start");
+  renderbox((Point){20, 20}, (Point){200, 50}, (SDL_Color){200, 0, 0, 255});
+  rendertext((Point){100, 30}, (SDL_Color){255, 255, 255, 255}, "Start");
   renderupdate();
-  if (e != NULL)
+  // Rect dest = {(Point){0, 0}, (Size){1280, 960}};
+  while (*state == MENU)
   {
+    SDL_WaitEvent(e);
     switch (e->type)
     {
     case SDL_MOUSEBUTTONDOWN:
+      Uint32 t1 = SDL_GetTicks();
       if (e->button.button == SDL_BUTTON_LEFT)
       {
         Point mousepos = {e->button.x, e->button.y};
         Rect bt1 = {(Point){20, 20}, (Size){120, 70}};
         if (withinbounds(bt1, mousepos))
         {
+          Uint32 t2 = SDL_GetTicks();
+          SDL_Log("%lf", (t2 - t1) / 1000.0);
           *state = GAME;
         }
       }
@@ -24,5 +29,6 @@ void menu(SDL_Event *e, State *state)
       *state = QUIT;
       break;
     }
+    renderupdate();
   }
 }

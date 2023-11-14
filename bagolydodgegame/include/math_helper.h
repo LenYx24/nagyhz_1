@@ -3,11 +3,19 @@
 
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <time.h>
+#include <stdlib.h>
+
+#include "macros.h"
 
 typedef struct Point
 {
   double x, y;
 } Point;
+typedef struct Vector2
+{
+  double x, y;
+} Vector2;
 typedef struct Size
 {
   int width, height;
@@ -18,6 +26,6 @@ typedef struct Rect
   Size size;
 } Rect;
 Point substract(Point p1, Point p2);
-// megnézi, hogy az adott téglalapban benne van-e a pont
 bool withinbounds(Rect r, Point p);
+Point randomspawnpoint();
 #endif

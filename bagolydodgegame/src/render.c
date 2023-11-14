@@ -1,7 +1,7 @@
 #include "../include/render.h"
 
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
 
 void createwindow(Size windowsize, char *title)
 {
@@ -46,15 +46,15 @@ void renderimage(SDL_Texture *t, Rect *dest)
   SDL_RenderCopy(renderer, t, NULL, &r);
 }
 void destroytexture(SDL_Texture *t) { SDL_DestroyTexture(t); }
-void renderbox(Point topleft, Point downright, Color color)
+void renderbox(Point topleft, Point downright, SDL_Color color)
 {
-  boxRGBA(renderer, topleft.x, topleft.y, downright.x, downright.y, color.R,
-          color.G, color.B, color.A);
+  boxRGBA(renderer, topleft.x, topleft.y, downright.x, downright.y, color.r,
+          color.g, color.b, color.a);
 }
 
-void rendertext(Point pos, Color color, char *text)
+void rendertext(Point pos, SDL_Color color, char *text)
 {
-  stringRGBA(renderer, pos.x, pos.y, text, color.R, color.G, color.B, color.A);
+  stringRGBA(renderer, pos.x, pos.y, text, color.r, color.g, color.b, color.a);
 }
 
 void renderupdate() { SDL_RenderPresent(renderer); }
