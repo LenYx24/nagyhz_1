@@ -5,5 +5,6 @@
 #include "render.h"
 #include "state.h"
 #include "math_helper.h"
+#include "macros.h"
 void menu(SDL_Event *e, State *state);
 #endif

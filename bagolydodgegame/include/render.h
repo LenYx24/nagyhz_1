@@ -9,12 +9,8 @@
 
 SDL_Texture *loadimage(char *pathname);
 void renderimagerect(SDL_Texture *t, Rect *dest);
-void destroytexture(SDL_Texture *t);
-
-void createuserevent();
 
 void createwindow(Size windowsize, char *title);
-void rendererquit();
 
 void renderbox(Point topleft, Point downright, SDL_Color color);
 void rendertext(Point pos, SDL_Color color, char *text);

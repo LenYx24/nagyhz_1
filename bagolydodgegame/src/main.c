@@ -23,6 +23,6 @@ int main(int argc, char *argv[])
 
   loop();
 
-  rendererquit();
+  SDL_Quit();
   return 0;
 }

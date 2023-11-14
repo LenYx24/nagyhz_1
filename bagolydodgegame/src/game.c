@@ -63,7 +63,7 @@ void game(SDL_Event *e, State *state)
       if (checkcollisioncircles(&player, fireballs))
         *state = MENU;
       // időmérés
-      char t[10];
+      char t[30];
       sprintf(t, "masodpercek: %lf", seconds);
       rendertext((Point){WINDOWWIDTH - 200, 10}, (SDL_Color){255, 255, 255, 255}, t);
       seconds += ms / 100.0; // 10ms * 100ms = 1s
@@ -77,8 +77,8 @@ void game(SDL_Event *e, State *state)
   }
   freefireballs(fireballs);
   SDL_RemoveTimer(timer);
-  destroytexture(background);
-  destroytexture(fireballtexture);
-  destroytexture(enemytexture);
-  destroytexture(player.texture);
+  SDL_DestroyTexture(background);
+  SDL_DestroyTexture(fireballtexture);
+  SDL_DestroyTexture(enemytexture);
+  SDL_DestroyTexture(player.texture);
 }

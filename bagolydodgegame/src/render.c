@@ -26,7 +26,6 @@ void createwindow(Size windowsize, char *title)
   }
   SDL_RenderClear(renderer);
 }
-void rendererquit() { SDL_Quit(); }
 
 SDL_Texture *loadimage(char *pathname)
 {
@@ -43,7 +42,6 @@ void renderimagerect(SDL_Texture *t, Rect *dest)
   SDL_Rect r = {dest->pos.x, dest->pos.y, dest->size.width, dest->size.height};
   SDL_RenderCopy(renderer, t, NULL, &r);
 }
-void destroytexture(SDL_Texture *t) { SDL_DestroyTexture(t); }
 void renderbox(Point topleft, Point downright, SDL_Color color)
 {
   boxRGBA(renderer, topleft.x, topleft.y, downright.x, downright.y, color.r,
@@ -55,11 +53,7 @@ void rendertext(Point pos, SDL_Color color, char *text)
   stringRGBA(renderer, pos.x, pos.y, text, color.r, color.g, color.b, color.a);
 }
 
-void renderupdate() { SDL_RenderPresent(renderer); }
-
-void createuserevent()
+void renderupdate()
 {
-  SDL_Event ev;
-  ev.type = SDL_USEREVENT;
-  SDL_PushEvent(&ev);
+  SDL_RenderPresent(renderer);
 }

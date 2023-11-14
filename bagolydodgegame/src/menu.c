@@ -10,6 +10,8 @@ void menu(SDL_Event *e, State *state)
   int pady = 20;
   Size btsize = {180, 30};
 
+  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
+
   Rect startbt = {.pos = {20, pady}, btsize};
   button("Start", startbt);
 
