@@ -38,7 +38,8 @@ void game(SDL_Event *e, State *state)
                    },
                    .missiles = NULL};
 
-  FireballNode *fireballs = NULL;
+  EntityNode *fireballs = NULL;
+  EntityNode *enemies = NULL;
 
   int fireballspawncounter = 0;
   int fireballcap = 100;
@@ -103,13 +104,13 @@ void game(SDL_Event *e, State *state)
         fireballspawncounter = 0;
         if (fireballcap > 30)
           fireballcap--;
-        fireballs = spawnfireball(fireballs, fireballtexture, player.position, fireballspeed);
+        fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballspeed);
       }
 
       // mozgatás
 
       moveplayer(&player);
-      fireballs = movefireballs(fireballs);
+      fireballs = moveentities(fireballs);
       player.missiles = movemissiles(&player);
 
       // ütközések
@@ -152,10 +153,12 @@ void game(SDL_Event *e, State *state)
       break;
     }
   }
-  freefireballs(fireballs);
+  freeentities(fireballs);
+  freeentities(enemies);
   SDL_RemoveTimer(timer);
   SDL_DestroyTexture(background);
   SDL_DestroyTexture(fireballtexture);
   SDL_DestroyTexture(enemytexture);
   SDL_DestroyTexture(player.texture);
+  SDL_DestroyTexture(player.missileprops.texture);
 }

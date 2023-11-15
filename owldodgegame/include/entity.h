@@ -47,7 +47,7 @@ typedef struct Player
   MissileNode *missiles;
 } Player;
 
-typedef struct Fireball
+typedef struct Entity
 {
   Point position;
   Vector2 direction;
@@ -55,7 +55,8 @@ typedef struct Fireball
   int hitboxradius;
   SDL_Texture *texture;
   double speed;
-} Fireball;
+  bool followplayer;
+} Entity;
 
 typedef struct EntityNode
 {
@@ -65,15 +66,15 @@ typedef struct EntityNode
 
 void moveplayer(Player *player);
 
-FireballNode *movefireballs(FireballNode *fireballs);
-FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos, double speed);
-void freefireballs(FireballNode *fireballs);
+EntityNode *moveentities(EntityNode *entities);
+EntityNode *spawnentity(EntityNode *list, SDL_Texture *t, Point playerpos, double speed);
+void freeentities(EntityNode *entities);
 
 MissileNode *movemissiles(Player *player);
 MissileNode *spawnmissile(Player *player);
 void freemissiles(Player *player);
 
-bool checkcollisioncircles(Player *player, FireballNode *fireballs);
+bool checkcollisioncircles(Player *player, EntityNode *entities);
 
 void playerflash(Player *player);
 #endif

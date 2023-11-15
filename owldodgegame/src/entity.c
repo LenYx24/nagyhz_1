@@ -13,27 +13,27 @@ void moveplayer(Player *player)
     renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 
-FireballNode *movefireballs(FireballNode *fireballs)
+EntityNode *moveentities(EntityNode *entities)
 {
-    FireballNode *prevfireball = NULL;
-    FireballNode *current = fireballs;
+    EntityNode *preventity = NULL;
+    EntityNode *current = entities;
     while (current != NULL)
     {
-        Fireball *f = &current->fireball;
+        Entity *f = &current->entity;
         if (outofscreen(f->position, f->imgsize))
         {
-            if (prevfireball == NULL)
+            if (preventity == NULL)
             {
-                FireballNode *newfirst = current->next;
+                EntityNode *newfirst = current->next;
                 free(current);
-                fireballs = newfirst;
-                current = fireballs;
+                entities = newfirst;
+                current = entities;
             }
             else
             {
-                prevfireball->next = current->next;
+                preventity->next = current->next;
                 free(current);
-                current = prevfireball->next;
+                current = preventity->next;
             }
         }
         else
@@ -42,34 +42,34 @@ FireballNode *movefireballs(FireballNode *fireballs)
             Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
             f->position = addvectortopoint(f->position, v);
             renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
-            prevfireball = current;
+            preventity = current;
             current = current->next;
         }
     }
-    return fireballs;
+    return entities;
 }
 
-FireballNode *spawnfireball(FireballNode *list, SDL_Texture *ftexture, Point playerpos, double speed)
+EntityNode *spawnentity(EntityNode *list, SDL_Texture *ftexture, Point playerpos, double speed)
 {
-    FireballNode *newfireball = (FireballNode *)malloc(sizeof(FireballNode));
-    newfireball->next = list;
+    EntityNode *newentity = (EntityNode *)malloc(sizeof(EntityNode));
+    newentity->next = list;
     Point spawnpoint = randomspawnpoint();
     Vector2 dest = normalizevector(vectorfromtwopoints(spawnpoint, playerpos));
 
-    Fireball e = {
+    Entity e = {
         .position = spawnpoint,
         .direction = dest,
         .hitboxradius = 35,
         .imgsize = {70, 70},
         .texture = ftexture,
         .speed = speed};
-    newfireball->fireball = e;
-    return newfireball;
+    newentity->entity = e;
+    return newentity;
 }
-void freefireballs(FireballNode *fireballs)
+void freeentities(EntityNode *entities)
 {
-    FireballNode *temp = NULL;
-    for (FireballNode *current = fireballs; current != NULL; current = temp)
+    EntityNode *temp = NULL;
+    for (EntityNode *current = entities; current != NULL; current = temp)
     {
         temp = current->next;
         free(current);
@@ -117,11 +117,11 @@ void freemissiles(Player *player)
     }
 }
 
-bool checkcollisioncircles(Player *player, FireballNode *fireballs)
+bool checkcollisioncircles(Player *player, EntityNode *entities)
 {
-    for (FireballNode *current = fireballs; current != NULL; current = current->next)
+    for (EntityNode *current = entities; current != NULL; current = current->next)
     {
-        Fireball *f = &current->fireball;
+        Entity *f = &current->entity;
         int distance = twopointsdistance(f->position, player->position);
         if (distance <= f->hitboxradius + player->hitboxradius)
             return true;
@@ -144,9 +144,9 @@ void playerflash(Player *player)
     player->position = destpos;
 }
 
-// bool checkcollisionrect(Player *player, FireballNode *fireballs)
+// bool checkcollisionrect(Player *player, EntityNode *fireballs)
 // {
-//     for (FireballNode *current = fireballs; current != NULL; current = current->next)
+//     for (EntityNode *current = fireballs; current != NULL; current = current->next)
 //     {
 //         double left = current->fireball.position.x;
 //         double right = left + current->fireball.size.width;
