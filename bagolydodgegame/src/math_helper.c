@@ -61,3 +61,9 @@ Point rectdownrightpoint(Rect rect)
 {
   return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};
 }
+double tanindegrees(double x, double y)
+{
+  double rad = tan(y / x);
+  double degrees = rad * 180 / PI;
+  return degrees;
+}

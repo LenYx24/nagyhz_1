@@ -37,10 +37,17 @@ SDL_Texture *loadimage(char *pathname)
   }
   return img;
 }
-void renderobject(SDL_Texture *t, Rect dest)
+void renderrectangle(SDL_Texture *t, Rect dest)
 {
   SDL_Rect r = {dest.pos.x, dest.pos.y, dest.size.width, dest.size.height};
   SDL_RenderCopy(renderer, t, NULL, &r);
+}
+
+void renderrectanglerotated(SDL_Texture *t, Rect dest, double angle)
+{
+  SDL_Rect r = {dest.pos.x, dest.pos.y, dest.size.width, dest.size.height};
+  SDL_Point center = {(int)dest.pos.x, (int)dest.pos.y};
+  SDL_RenderCopyEx(renderer, t, NULL, &r, angle, &center, SDL_FLIP_NONE);
 }
 void renderbox(Point topleft, Point downright, SDL_Color color)
 {

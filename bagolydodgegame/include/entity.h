@@ -6,22 +6,29 @@
 #include "math_helper.h"
 #include "render.h"
 
+typedef struct SpellProperties
+{
+  const double cooldown;
+  const double range;
+  bool oncd;
+  SDL_Texture *texture;
+  Size imgsize;
+  int speed;
+} SpellProperties;
+
 typedef struct Flash
 {
-  double cooldown;
+  SpellProperties props;
   double cdcounter;
-  double range;
-  bool oncd;
 } Flash;
-
 typedef struct Missile
 {
   Point position;
   Vector2 direction;
-  double cooldown;
-  double range;
+  double angle;
+  double distancetraveled;
+  double cdcounter;
 } Missile;
-
 typedef struct MissileNode
 {
   Missile missile;
@@ -40,7 +47,8 @@ typedef struct Player
   SDL_Texture *texture;
 
   Flash flash;
-  MissileNode missiles;
+  SpellProperties missileprops;
+  MissileNode *missiles;
 } Player;
 
 typedef struct Fireball
@@ -74,6 +82,10 @@ void moveplayer(Player *player);
 void movefireballs(FireballNode *fireballs);
 FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freefireballs(FireballNode *fireballs);
+
+void movemissiles(Player *player);
+MissileNode *spawnmissile(Player *player);
+void freemissiles(Player *player);
 
 bool checkcollisioncircles(Player *player, FireballNode *fireballs);
 

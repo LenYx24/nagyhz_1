@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 
   loop();
 
+  // scoreboard save
   SDL_Quit();
   return 0;
 }

@@ -1,5 +1,6 @@
 #ifndef MATH_HELPER_H
 #define MATH_HELPER_H
+#define PI 3.1416
 
 #include <stdbool.h>
 #include <SDL2/SDL.h>
@@ -35,4 +36,5 @@ Point gettopleftpoint(Point pos, Size size);
 Point addvectortopoint(Point p, Vector2 v);
 Point rectdownrightpoint(Rect rect);
 Vector2 normalizevector(Vector2 v);
+double tanindegrees(double x, double y);
 #endif

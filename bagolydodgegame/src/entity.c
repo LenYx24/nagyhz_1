@@ -10,7 +10,7 @@ void moveplayer(Player *player)
         player->position.x += speed * destposvect.x;
         player->position.y += speed * destposvect.y;
     }
-    renderobject(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
+    renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 void movefireballs(FireballNode *fireballs)
 {
@@ -20,7 +20,7 @@ void movefireballs(FireballNode *fireballs)
         int speed = f->speed;
         Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
         f->position = addvectortopoint(f->position, v);
-        renderobject(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
+        renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
     }
 }
 
@@ -50,6 +50,50 @@ void freefireballs(FireballNode *fireballs)
         free(current);
     }
 }
+
+void movemissiles(Player *player)
+{
+    for (MissileNode *current = player->missiles; current != NULL; current = current->next)
+    {
+        Missile *m = &current->missile;
+        int speed = player->missileprops.speed;
+        Vector2 v = {.x = m->direction.x * speed, .y = m->direction.y * speed};
+        m->position = addvectortopoint(m->position, v);
+        renderrectanglerotated(
+            player->missileprops.texture,
+            (Rect){gettopleftpoint(m->position, player->missileprops.imgsize),
+                   player->missileprops.imgsize},
+            m->angle);
+    }
+}
+MissileNode *spawnmissile(Player *player)
+{
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    Point mousepos = {(double)x, (double)y};
+    MissileNode *newmissile = (MissileNode *)malloc(sizeof(MissileNode));
+    newmissile->next = player->missiles;
+    Vector2 dest = normalizevector(vectorfromtwopoints(player->position, mousepos));
+
+    Missile m = {
+        .position = player->position,
+        .direction = dest,
+        .distancetraveled = player->missileprops.range,
+        .cdcounter = player->missileprops.cooldown,
+        .angle = tanindegrees(dest.x, dest.y)};
+    newmissile->missile = m;
+    return newmissile;
+}
+void freemissiles(Player *player)
+{
+    MissileNode *temp = NULL;
+    for (MissileNode *current = player->missiles; current != NULL; current = temp)
+    {
+        temp = current->next;
+        free(current);
+    }
+}
+
 bool checkcollisioncircles(Player *player, FireballNode *fireballs)
 {
     for (FireballNode *current = fireballs; current != NULL; current = current->next)
@@ -65,16 +109,15 @@ void playerflash(Player *player)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    Point destpos = (Point){x, y};
+    Point destpos = {(double)x, (double)y};
     int distance = twopointsdistance(player->position, destpos);
-    SDL_Log("mx: %d, my: %d, px: %lf, py: %lf, distance: %d", x, y, player->position.x, player->position.y, distance);
-    if (distance >= player->flash.range)
+    if (distance >= player->flash.props.range)
     {
-        double ratio = player->flash.range / (double)distance;
-        SDL_Log("outofrange, ratio: %lf", ratio);
-        destpos = (Point){player->position.x * (1 - ratio) + (ratio * destpos.x), player->position.y * (1 - ratio) + (ratio * destpos.y)};
+        double ratio = player->flash.props.range / (double)distance;
+        double destx = player->position.x * (1 - ratio) + (ratio * destpos.x);
+        double desty = player->position.y * (1 - ratio) + (ratio * destpos.y);
+        destpos = (Point){destx, desty};
     }
-    SDL_Log("destx: %lf, desty: %lf", destpos.x, destpos.y);
     player->position = destpos;
 }
 

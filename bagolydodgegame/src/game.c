@@ -20,10 +20,19 @@ void game(SDL_Event *e, State *state)
                    .speed = 2.7f,
                    .texture = loadimage("resources/player.png"),
                    .flash = (Flash){
-                       .cooldown = 3.0f,
+                       .props = (SpellProperties){
+                           .cooldown = 3.0f,
+                           .range = 300.0f,
+                           .oncd = false},
                        .cdcounter = 3.0f,
+                   },
+                   .missileprops = (SpellProperties){
+                       .cooldown = 1.0f,
+                       .range = 500.0f,
                        .oncd = false,
-                       .range = 300.0f}};
+                       .texture = loadimage("resources/missile.png"),
+                       .imgsize = (Size){100, 20},
+                   }};
 
   FireballNode *fireballs = NULL;
 
@@ -54,11 +63,25 @@ void game(SDL_Event *e, State *state)
       {
       case SDLK_d:
       {
-        if (!player.flash.oncd)
+        if (!player.flash.props.oncd)
         {
           playerflash(&player);
         }
-        player.flash.oncd = true;
+        player.flash.props.oncd = true;
+        break;
+      }
+      case SDLK_q: // lövedék létrehozása
+      {
+        if (!player.missileprops.oncd)
+        {
+          spawnmissile(&player);
+        }
+        player.missileprops.oncd = true;
+        break;
+      }
+      case SDLK_s: // játékos mozgásának megállítása
+      {
+        player.destination = player.position;
         break;
       }
       }
@@ -66,7 +89,7 @@ void game(SDL_Event *e, State *state)
       break;
 
     case SDL_USEREVENT:
-      renderobject(background, backgrounddest); // háttér újratöltése
+      renderrectangle(background, backgrounddest); // háttér újratöltése
 
       // új elemek létrehozása
 
@@ -90,20 +113,24 @@ void game(SDL_Event *e, State *state)
         *state = MENU;
 
       // játékos képességek
-      if (player.flash.oncd)
+      if (player.flash.props.oncd)
       {
         player.flash.cdcounter -= ms / 1000.0;
         if (player.flash.cdcounter <= 0.0f)
         {
-          player.flash.cdcounter = player.flash.cooldown;
-          player.flash.oncd = false;
+          player.flash.cdcounter = player.flash.props.cooldown;
+          player.flash.props.oncd = false;
         }
       }
-      showcooldowns(player.flash.oncd);
+      showcooldowns(&player);
+
       // időmérés
 
       showseconds(seconds);
       seconds += ms / 100.0; // 10ms * 100ms = 1s
+
+      // megjelenítő frissítése
+
       renderupdate();
       break;
     case SDL_QUIT:
