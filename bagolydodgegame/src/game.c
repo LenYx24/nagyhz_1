@@ -59,7 +59,6 @@ void game(SDL_Event *e, State *state)
           playerflash(&player);
         }
         player.flash.oncd = true;
-
         break;
       }
       }
@@ -93,12 +92,8 @@ void game(SDL_Event *e, State *state)
       // játékos képességek
       if (player.flash.oncd)
       {
-        if (player.flash.cdcounter >= 0.0f)
-        {
-          SDL_Log("%lf", player.flash.cdcounter);
-          player.flash.cdcounter -= ms / 1000.0;
-        }
-        else
+        player.flash.cdcounter -= ms / 1000.0;
+        if (player.flash.cdcounter <= 0.0f)
         {
           player.flash.cdcounter = player.flash.cooldown;
           player.flash.oncd = false;

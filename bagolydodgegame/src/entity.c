@@ -67,11 +67,14 @@ void playerflash(Player *player)
     SDL_GetMouseState(&x, &y);
     Point destpos = (Point){x, y};
     int distance = twopointsdistance(player->position, destpos);
+    SDL_Log("mx: %d, my: %d, px: %lf, py: %lf, distance: %d", x, y, player->position.x, player->position.y, distance);
     if (distance >= player->flash.range)
     {
-        int ratio = player->flash.range / distance;
-        destpos = (Point){player->position.x + ratio * destpos.x, player->position.y + ratio * destpos.y};
+        double ratio = player->flash.range / (double)distance;
+        SDL_Log("outofrange, ratio: %lf", ratio);
+        destpos = (Point){player->position.x * (1 - ratio) + (ratio * destpos.x), player->position.y * (1 - ratio) + (ratio * destpos.y)};
     }
+    SDL_Log("destx: %lf, desty: %lf", destpos.x, destpos.y);
     player->position = destpos;
 }
 
