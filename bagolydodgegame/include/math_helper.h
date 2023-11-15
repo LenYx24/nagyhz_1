@@ -2,12 +2,12 @@
 #define MATH_HELPER_H
 #define PI 3.1416
 
-#include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 #include <time.h>
 #include <stdlib.h>
-#include <math.h>
 
+#include <math.h>
 #include "macros.h"
 
 typedef struct Point
@@ -29,6 +29,7 @@ typedef struct Rect
 } Rect;
 Point substract(Point p1, Point p2);
 bool withinbounds(Rect r, Point p);
+bool outofscreen(Point pos, Size size);
 Point randomspawnpoint();
 int twopointsdistance(Point p1, Point p2);
 Vector2 vectorfromtwopoints(Point start, Point end);

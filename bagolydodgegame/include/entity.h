@@ -79,7 +79,7 @@ typedef struct FireballNode
 
 void moveplayer(Player *player);
 
-void movefireballs(FireballNode *fireballs);
+FireballNode *movefireballs(FireballNode *fireballs);
 FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freefireballs(FireballNode *fireballs);
 

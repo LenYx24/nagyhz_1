@@ -105,7 +105,8 @@ void game(SDL_Event *e, State *state)
       // mozgatás
 
       moveplayer(&player);
-      movefireballs(fireballs);
+      fireballs = movefireballs(fireballs);
+      movemissiles(&player);
 
       // ütközések
 

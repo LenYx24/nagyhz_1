@@ -24,7 +24,7 @@ void showcooldowns(Player *player)
     int halfwindowwidth = WINDOWWIDTH / 2;
 
     int textlength = 20;
-    int rectlength = 30;
+    int rectlength = 20;
     int fullwidth = 2 * textlength + 2 * rectlength;
 
     Point startp = {halfwindowwidth - (fullwidth / 2), WINDOWHEIGHT - padbottom - rectyoffest};
@@ -36,7 +36,7 @@ void showcooldowns(Player *player)
 
     renderbox(startp, rectdownright, missilecolor);
     startp.x += rectlength + padx;
-    rectdownright.x += textlength + padx;
+    rectdownright.x += rectlength + padx;
 
     rendertext(startp, white, "D:");
     startp.x += textlength + padx;

@@ -12,16 +12,40 @@ void moveplayer(Player *player)
     }
     renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
-void movefireballs(FireballNode *fireballs)
+
+FireballNode *movefireballs(FireballNode *fireballs)
 {
-    for (FireballNode *current = fireballs; current != NULL; current = current->next)
+    FireballNode *prevfireball = NULL;
+    FireballNode *current = fireballs;
+    while (current != NULL)
     {
         Fireball *f = &current->fireball;
-        int speed = f->speed;
-        Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
-        f->position = addvectortopoint(f->position, v);
-        renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
+        if (outofscreen(f->position, f->imgsize))
+        {
+            if (prevfireball == NULL)
+            {
+                FireballNode *newfirst = current->next;
+                free(current);
+                fireballs = newfirst;
+            }
+            else
+            {
+                prevfireball->next = current->next;
+                free(current);
+                current = prevfireball->next;
+            }
+        }
+        else
+        {
+            int speed = f->speed;
+            Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
+            f->position = addvectortopoint(f->position, v);
+            renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
+            prevfireball = current->next;
+            current = current->next;
+        }
     }
+    return fireballs;
 }
 
 FireballNode *spawnfireball(FireballNode *list, SDL_Texture *ftexture, Point playerpos, double speed)

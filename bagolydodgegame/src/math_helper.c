@@ -14,6 +14,16 @@ bool withinbounds(Rect r, Point p)
   return (left <= p.x && p.x <= right) && (top <= p.y && p.y <= bottom);
 }
 
+bool outofscreen(Point pos, Size size)
+{
+  int left = pos.x;
+  int right = left + size.width;
+  int top = pos.y;
+  int bottom = top + size.height;
+  int leftscreen = 0;
+  int topscreen = 0;
+  return bottom <= topscreen || WINDOWHEIGHT <= top || right <= leftscreen || WINDOWWIDTH <= left;
+}
 Point randomspawnpoint()
 {
   Point p;
