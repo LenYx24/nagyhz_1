@@ -27,6 +27,7 @@ FireballNode *movefireballs(FireballNode *fireballs)
                 FireballNode *newfirst = current->next;
                 free(current);
                 fireballs = newfirst;
+                current = fireballs;
             }
             else
             {
@@ -41,7 +42,7 @@ FireballNode *movefireballs(FireballNode *fireballs)
             Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
             f->position = addvectortopoint(f->position, v);
             renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
-            prevfireball = current->next;
+            prevfireball = current;
             current = current->next;
         }
     }
