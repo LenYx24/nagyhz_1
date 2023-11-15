@@ -6,29 +6,25 @@
 #include "math_helper.h"
 #include "render.h"
 
-typedef struct SpellProperties
+typedef struct Spell
 {
   const double cooldown;
   const double range;
+  double cdcounter;
   bool oncd;
   SDL_Texture *texture;
   Size imgsize;
   int speed;
-} SpellProperties;
+} Spell;
 
-typedef struct Flash
-{
-  SpellProperties props;
-  double cdcounter;
-} Flash;
 typedef struct Missile
 {
   Point position;
   Vector2 direction;
   double angle;
   double distancetraveled;
-  double cdcounter;
 } Missile;
+
 typedef struct MissileNode
 {
   Missile missile;
@@ -46,8 +42,8 @@ typedef struct Player
   Size imgsize;
   SDL_Texture *texture;
 
-  Flash flash;
-  SpellProperties missileprops;
+  Spell flash;
+  Spell missileprops;
   MissileNode *missiles;
 } Player;
 
@@ -61,21 +57,11 @@ typedef struct Fireball
   double speed;
 } Fireball;
 
-typedef struct Enemy
+typedef struct EntityNode
 {
-  Point position;
-  Point destination;
-  Size imgsize;
-  int hitboxradius;
-  SDL_Texture *texture;
-  double speed;
-} Enemy;
-
-typedef struct FireballNode
-{
-  Fireball fireball;
-  struct FireballNode *next;
-} FireballNode;
+  Entity entity;
+  struct EntityNode *next;
+} EntityNode;
 
 void moveplayer(Player *player);
 
@@ -83,7 +69,7 @@ FireballNode *movefireballs(FireballNode *fireballs);
 FireballNode *spawnfireball(FireballNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freefireballs(FireballNode *fireballs);
 
-void movemissiles(Player *player);
+MissileNode *movemissiles(Player *player);
 MissileNode *spawnmissile(Player *player);
 void freemissiles(Player *player);
 

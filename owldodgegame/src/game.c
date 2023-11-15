@@ -14,25 +14,29 @@ void game(SDL_Event *e, State *state)
 
   Rect backgrounddest = {(Point){0, 0}, (Size){1280, 960}};
   Player player = {.position = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
-                   .imgsize = {100, 100},
-                   .hitboxradius = 40,
                    .destination = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
+
+                   .hitboxradius = 40,
                    .speed = 2.7f,
+
+                   .imgsize = {100, 100},
                    .texture = loadimage("resources/player.png"),
-                   .flash = (Flash){
-                       .props = (SpellProperties){
-                           .cooldown = 3.0f,
-                           .range = 300.0f,
-                           .oncd = false},
+
+                   .flash = (Spell){
+                       .cooldown = 3.0f,
+                       .range = 200.0f,
+                       .oncd = false,
                        .cdcounter = 3.0f,
                    },
-                   .missileprops = (SpellProperties){
+                   .missileprops = (Spell){
                        .cooldown = 1.0f,
                        .range = 500.0f,
                        .oncd = false,
                        .texture = loadimage("resources/missile.png"),
                        .imgsize = (Size){100, 20},
-                   }};
+                       .speed = 7.0f,
+                   },
+                   .missiles = NULL};
 
   FireballNode *fireballs = NULL;
 
@@ -63,18 +67,18 @@ void game(SDL_Event *e, State *state)
       {
       case SDLK_d:
       {
-        if (!player.flash.props.oncd)
+        if (!player.flash.oncd)
         {
           playerflash(&player);
         }
-        player.flash.props.oncd = true;
+        player.flash.oncd = true;
         break;
       }
       case SDLK_q: // lövedék létrehozása
       {
         if (!player.missileprops.oncd)
         {
-          spawnmissile(&player);
+          player.missiles = spawnmissile(&player);
         }
         player.missileprops.oncd = true;
         break;
@@ -106,7 +110,7 @@ void game(SDL_Event *e, State *state)
 
       moveplayer(&player);
       fireballs = movefireballs(fireballs);
-      movemissiles(&player);
+      player.missiles = movemissiles(&player);
 
       // ütközések
 
@@ -114,13 +118,22 @@ void game(SDL_Event *e, State *state)
         *state = MENU;
 
       // játékos képességek
-      if (player.flash.props.oncd)
+      if (player.flash.oncd)
       {
         player.flash.cdcounter -= ms / 1000.0;
         if (player.flash.cdcounter <= 0.0f)
         {
-          player.flash.cdcounter = player.flash.props.cooldown;
-          player.flash.props.oncd = false;
+          player.flash.cdcounter = player.flash.cooldown;
+          player.flash.oncd = false;
+        }
+      }
+      if (player.missileprops.oncd)
+      {
+        player.missileprops.cdcounter -= ms / 1000.0;
+        if (player.missileprops.cdcounter <= 0.0f)
+        {
+          player.missileprops.cdcounter = player.flash.cooldown;
+          player.missileprops.oncd = false;
         }
       }
       showcooldowns(&player);

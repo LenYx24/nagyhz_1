@@ -15,7 +15,7 @@ void showcooldowns(Player *player)
     SDL_Color flashcolor = green;
     SDL_Color missilecolor = green;
 
-    if (player->flash.props.oncd)
+    if (player->flash.oncd)
         flashcolor = red;
     if (player->missileprops.oncd)
         missilecolor = red;

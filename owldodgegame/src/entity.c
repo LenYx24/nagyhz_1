@@ -76,13 +76,13 @@ void freefireballs(FireballNode *fireballs)
     }
 }
 
-void movemissiles(Player *player)
+MissileNode *movemissiles(Player *player)
 {
     for (MissileNode *current = player->missiles; current != NULL; current = current->next)
     {
         Missile *m = &current->missile;
         int speed = player->missileprops.speed;
-        Vector2 v = {.x = m->direction.x * speed, .y = m->direction.y * speed};
+        Vector2 v = {m->direction.x * speed, m->direction.y * speed};
         m->position = addvectortopoint(m->position, v);
         renderrectanglerotated(
             player->missileprops.texture,
@@ -90,6 +90,7 @@ void movemissiles(Player *player)
                    player->missileprops.imgsize},
             m->angle);
     }
+    return player->missiles;
 }
 MissileNode *spawnmissile(Player *player)
 {
@@ -98,15 +99,12 @@ MissileNode *spawnmissile(Player *player)
     Point mousepos = {(double)x, (double)y};
     MissileNode *newmissile = (MissileNode *)malloc(sizeof(MissileNode));
     newmissile->next = player->missiles;
-    Vector2 dest = normalizevector(vectorfromtwopoints(player->position, mousepos));
-
-    Missile m = {
+    Vector2 dir = normalizevector(vectorfromtwopoints(player->position, (Point){(double)mousepos.x, (double)mousepos.y}));
+    newmissile->missile = (Missile){
         .position = player->position,
-        .direction = dest,
+        .direction = dir,
         .distancetraveled = player->missileprops.range,
-        .cdcounter = player->missileprops.cooldown,
-        .angle = tanindegrees(dest.x, dest.y)};
-    newmissile->missile = m;
+        .angle = getangle(dir)};
     return newmissile;
 }
 void freemissiles(Player *player)
@@ -136,9 +134,9 @@ void playerflash(Player *player)
     SDL_GetMouseState(&x, &y);
     Point destpos = {(double)x, (double)y};
     int distance = twopointsdistance(player->position, destpos);
-    if (distance >= player->flash.props.range)
+    if (distance >= player->flash.range)
     {
-        double ratio = player->flash.props.range / (double)distance;
+        double ratio = player->flash.range / (double)distance;
         double destx = player->position.x * (1 - ratio) + (ratio * destpos.x);
         double desty = player->position.y * (1 - ratio) + (ratio * destpos.y);
         destpos = (Point){destx, desty};

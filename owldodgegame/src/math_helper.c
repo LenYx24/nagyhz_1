@@ -33,7 +33,7 @@ Point randomspawnpoint()
     if (rand() % 2)
       p.x = 0; // bal
     else
-      p.x = WINDOWWIDTH; // jobb
+      p.x = WINDOWWIDTH - 10; // jobb
   }
   else
   { // fent vagy lent
@@ -41,7 +41,7 @@ Point randomspawnpoint()
     if (rand() % 2)
       p.y = 0; // fent
     else
-      p.y = WINDOWHEIGHT; // lent
+      p.y = WINDOWHEIGHT - 10; // lent
   }
   return p;
 }
@@ -71,9 +71,32 @@ Point rectdownrightpoint(Rect rect)
 {
   return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};
 }
-double tanindegrees(double x, double y)
+double getangle(Vector2 v)
 {
-  double rad = tan(y / x);
+  v.y = -v.y;
+  double rad;
+  bool b = false;
+  if (v.x >= v.y)
+    rad = atan(fabs(v.y) / fabs(v.x));
+  else
+  {
+    b = true;
+    rad = atan(fabs(v.x) / fabs(v.y));
+  }
   double degrees = rad * 180 / PI;
+  if (b)
+    degrees = 90 - degrees;
+  if (v.x <= 0 && v.y <= 0) // 3. negyed
+  {
+    degrees = 180 - degrees;
+  }
+  if (v.x <= 0 && v.y >= 0) // 2. negyed
+  {
+    degrees += 2 * 90;
+  }
+  if (v.x >= 0 && v.y >= 0) // 1. negyed
+  {
+    degrees = 360 - degrees;
+  }
   return degrees;
 }
