@@ -20,10 +20,10 @@ void game(SDL_Event *e, State *state)
                    .speed = 2.7f,
                    .texture = loadimage("resources/player.png"),
                    .flash = (Flash){
-                       .cooldown = 4.0f,
-                       .cdcounter = 4.0f,
+                       .cooldown = 3.0f,
+                       .cdcounter = 3.0f,
                        .oncd = false,
-                       .range = 500.0f}};
+                       .range = 300.0f}};
 
   FireballNode *fireballs = NULL;
 
@@ -54,8 +54,12 @@ void game(SDL_Event *e, State *state)
       {
       case SDLK_d:
       {
+        if (!player.flash.oncd)
+        {
+          playerflash(&player);
+        }
         player.flash.oncd = true;
-        playerflash(&player);
+
         break;
       }
       }
@@ -63,7 +67,7 @@ void game(SDL_Event *e, State *state)
       break;
 
     case SDL_USEREVENT:
-      renderimagerect(background, &backgrounddest); // háttér újratöltése
+      renderobject(background, backgrounddest); // háttér újratöltése
 
       // új elemek létrehozása
 
@@ -90,7 +94,10 @@ void game(SDL_Event *e, State *state)
       if (player.flash.oncd)
       {
         if (player.flash.cdcounter >= 0.0f)
-          player.flash.cdcounter -= ms / 100.0;
+        {
+          SDL_Log("%lf", player.flash.cdcounter);
+          player.flash.cdcounter -= ms / 1000.0;
+        }
         else
         {
           player.flash.cdcounter = player.flash.cooldown;
@@ -102,7 +109,6 @@ void game(SDL_Event *e, State *state)
 
       showseconds(seconds);
       seconds += ms / 100.0; // 10ms * 100ms = 1s
-
       renderupdate();
       break;
     case SDL_QUIT:

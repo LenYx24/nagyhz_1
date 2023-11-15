@@ -10,9 +10,7 @@ void moveplayer(Player *player)
         player->position.x += speed * destposvect.x;
         player->position.y += speed * destposvect.y;
     }
-    Rect playerimgdest = {gettopleftpoint(player->position, player->imgsize),
-                          player->imgsize};
-    renderimagerect(player->texture, &playerimgdest);
+    renderobject(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 void movefireballs(FireballNode *fireballs)
 {
@@ -22,9 +20,7 @@ void movefireballs(FireballNode *fireballs)
         int speed = f->speed;
         Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
         f->position = addvectortopoint(f->position, v);
-        Rect fireballimgdest = {gettopleftpoint(f->position, f->imgsize),
-                                f->imgsize};
-        renderimagerect(f->texture, &fireballimgdest);
+        renderobject(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
     }
 }
 
@@ -68,17 +64,15 @@ bool checkcollisioncircles(Player *player, FireballNode *fireballs)
 void playerflash(Player *player)
 {
     int x, y;
-    SDL_GetRelativeMouseState(&x, &y);
-    Point mousepos = (Point){x, y};
-    int distance = twopointsdistance(player->position, mousepos);
+    SDL_GetMouseState(&x, &y);
+    Point destpos = (Point){x, y};
+    int distance = twopointsdistance(player->position, destpos);
     if (distance >= player->flash.range)
     {
-        // közelebb kell hozni a pontot
+        int ratio = player->flash.range / distance;
+        destpos = (Point){player->position.x + ratio * destpos.x, player->position.y + ratio * destpos.y};
     }
-    else
-    {
-        player->position = mousepos;
-    }
+    player->position = destpos;
 }
 
 // bool checkcollisionrect(Player *player, FireballNode *fireballs)
