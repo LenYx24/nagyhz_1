@@ -1,0 +1,26 @@
+kérdések:
+hogyan inicializáljam az srand-ot
+kell argc és argv[] a mainbe?
+lehet MATH.Pi-t használni?
+
+nagyhz hátrvan:
+scoreboard -> fájlba mentés + megjelenítés
+score számolása
+q spell
+enemy list
+nehézségek
+menü
+tűzgolyó rotálódjon
+
+extra:
+hangok
+animáció
+klikking animáció
+
+refactoring:
+-structs-nál átgondolni, hogy mik a közös elemek
+-renderfgv nevek
+-kell double változó? speednek meg ezeknek?
+
+design kérdés:
+legyen +1 bool freeentitiesnél, hogy followplayer?
