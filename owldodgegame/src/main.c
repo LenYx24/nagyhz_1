@@ -14,7 +14,7 @@
 
 int main(int argc, char *argv[])
 {
-  srand(time(NULL));
+  srand((unsigned)time(0));
 
   Size windowsize = {WINDOWWIDTH, WINDOWHEIGHT};
   char *title = "bagolyjatek";

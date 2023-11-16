@@ -14,10 +14,12 @@ typedef struct Point
 {
   double x, y;
 } Point;
+
 typedef struct Vector2
 {
   double x, y;
 } Vector2;
+
 typedef struct Size
 {
   int width, height;
@@ -27,15 +29,22 @@ typedef struct Rect
   Point pos;
   Size size;
 } Rect;
-Point substract(Point p1, Point p2);
-bool withinbounds(Rect r, Point p);
-bool outofscreen(Point pos, Size size);
+
 Point randomspawnpoint();
-int twopointsdistance(Point p1, Point p2);
-Vector2 vectorfromtwopoints(Point start, Point end);
+Point substracttwopoints(Point p1, Point p2);
 Point gettopleftpoint(Point pos, Size size);
 Point addvectortopoint(Point p, Vector2 v);
 Point rectdownrightpoint(Rect rect);
+
+Vector2 vectorfromtwopoints(Point start, Point end);
 Vector2 normalizevector(Vector2 v);
+
+bool withinbounds(Rect r, Point p);
+bool outofscreen(Point pos, Size size);
+
+int twopointsdistance(Point p1, Point p2);
+int vectorlength(Vector2 v);
+
 double getangle(Vector2 v);
+
 #endif

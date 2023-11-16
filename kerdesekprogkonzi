@@ -1,16 +1,9 @@
-kérdések:
-hogyan inicializáljam az srand-ot
-kell argc és argv[] a mainbe?
-lehet MATH.Pi-t használni?
-
-nagyhz hátrvan:
+nagyhz hátravan:
 scoreboard -> fájlba mentés + megjelenítés
 score számolása
-q spell
-enemy list
 nehézségek
 menü
-tűzgolyó rotálódjon
+tűzgolyó képe rotálódjon
 
 extra:
 hangok
@@ -21,6 +14,7 @@ refactoring:
 -structs-nál átgondolni, hogy mik a közös elemek
 -renderfgv nevek
 -kell double változó? speednek meg ezeknek?
+-PI define-al
 
 design kérdés:
 legyen +1 bool freeentitiesnél, hogy followplayer?

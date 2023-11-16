@@ -1,6 +1,6 @@
 #include "../include/math_helper.h"
 
-Point substract(Point p1, Point p2)
+Point substracttwopoints(Point p1, Point p2)
 {
   Point result = {p2.x - p1.x, p2.y - p1.y};
   return result;
@@ -50,6 +50,10 @@ int twopointsdistance(Point p1, Point p2)
 {
   return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
+int vectorlength(Vector2 v)
+{
+  return sqrt(pow(v.x, 2) + pow(v.y, 2));
+}
 Vector2 vectorfromtwopoints(Point start, Point end)
 {
   return (Vector2){.x = end.x - start.x, .y = end.y - start.y};
@@ -67,6 +71,7 @@ Vector2 normalizevector(Vector2 v)
   int distance = sqrt(pow(v.x, 2) + pow(v.y, 2));
   return (Vector2){.x = v.x / distance, .y = v.y / distance};
 }
+
 Point rectdownrightpoint(Rect rect)
 {
   return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};

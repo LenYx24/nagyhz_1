@@ -13,7 +13,7 @@ void moveplayer(Player *player)
     renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 
-EntityNode *moveentities(EntityNode *entities, bool followplayer)
+EntityNode *moveentities(EntityNode *entities)
 {
     EntityNode *preventity = NULL;
     EntityNode *current = entities;
@@ -48,6 +48,14 @@ EntityNode *moveentities(EntityNode *entities, bool followplayer)
     }
     return entities;
 }
+void entitychangedir(EntityNode *entities, Point playerpos)
+{
+    for (EntityNode *current = entities; current != NULL; current = current->next)
+    {
+        Vector2 newdir = normalizevector(vectorfromtwopoints(current->entity.position, playerpos));
+        current->entity.direction = newdir;
+    }
+}
 
 EntityNode *spawnentity(EntityNode *list, SDL_Texture *ftexture, Point playerpos, double speed)
 {
@@ -59,8 +67,8 @@ EntityNode *spawnentity(EntityNode *list, SDL_Texture *ftexture, Point playerpos
     Entity e = {
         .position = spawnpoint,
         .direction = dest,
-        .hitboxradius = 35,
-        .imgsize = {70, 70},
+        .hitboxradius = 42,
+        .imgsize = {85, 85},
         .texture = ftexture,
         .speed = speed};
     newentity->entity = e;
@@ -76,22 +84,6 @@ void freeentities(EntityNode *entities)
     }
 }
 
-MissileNode *movemissiles(Player *player)
-{
-    for (MissileNode *current = player->missiles; current != NULL; current = current->next)
-    {
-        Missile *m = &current->missile;
-        int speed = player->missileprops.speed;
-        Vector2 v = {m->direction.x * speed, m->direction.y * speed};
-        m->position = addvectortopoint(m->position, v);
-        renderrectanglerotated(
-            player->missileprops.texture,
-            (Rect){gettopleftpoint(m->position, player->missileprops.imgsize),
-                   player->missileprops.imgsize},
-            m->angle);
-    }
-    return player->missiles;
-}
 MissileNode *spawnmissile(Player *player)
 {
     int x, y;
@@ -103,9 +95,49 @@ MissileNode *spawnmissile(Player *player)
     newmissile->missile = (Missile){
         .position = player->position,
         .direction = dir,
-        .distancetraveled = player->missileprops.range,
+        .distancetraveled = 0,
         .angle = getangle(dir)};
     return newmissile;
+}
+MissileNode *movemissiles(Player *player)
+{
+    MissileNode *prev = NULL;
+    MissileNode *current = player->missiles;
+    while (current != NULL)
+    {
+        Missile *m = &current->missile;
+        if (m->distancetraveled >= player->missileprops.range)
+        {
+            if (prev == NULL)
+            {
+                MissileNode *newfirst = current->next;
+                free(current);
+                player->missiles = newfirst;
+                current = newfirst;
+            }
+            else
+            {
+                prev->next = current->next;
+                free(current);
+                current = prev->next;
+            }
+        }
+        else
+        {
+            int speed = player->missileprops.speed;
+            Vector2 v = {m->direction.x * speed, m->direction.y * speed};
+            m->position = addvectortopoint(m->position, v);
+            m->distancetraveled += vectorlength(v);
+            renderrectanglerotated(
+                player->missileprops.texture,
+                (Rect){gettopleftpoint(m->position, player->missileprops.imgsize),
+                       player->missileprops.imgsize},
+                m->angle);
+            prev = current;
+            current = current->next;
+        }
+    }
+    return player->missiles;
 }
 void freemissiles(Player *player)
 {
@@ -128,9 +160,48 @@ bool checkcollisioncircles(Player *player, EntityNode *entities)
     }
     return false;
 }
-bool checkcollisionmissileenemy(Player *player, EntityNode *enemies)
+void checkcollisionmissileenemy(Player *player, EntityNode *enemies)
 {
-    return false;
+    // enemies-t cím szerint átvenni, mert módosítani kell
+    for (EntityNode *enemyiter = enemies; enemyiter != NULL; enemyiter = enemyiter->next)
+    {
+        for (MissileNode *missileiter = player->missiles; missileiter != NULL; missileiter = missileiter->next)
+        {
+            Missile *missile = &missileiter->missile;
+            Point circlecenter = enemyiter->entity.position;
+            Point rectcenter = {
+                missile->position.x + player->missileprops.imgsize.width / 2,
+                missile->position.y + player->missileprops.imgsize.height / 2};
+            double c = cos(missile->angle);
+            double s = sin(missile->angle);
+            Point rotatedcirclecenter = {
+                .x = c * (circlecenter.x - rectcenter.x) - s * (circlecenter.y - rectcenter.y) + rectcenter.y,
+                .y = s * (circlecenter.x - rectcenter.x) + c * (circlecenter.y - rectcenter.y) + rectcenter.y};
+            Point closestpoint;
+
+            if (rotatedcirclecenter.x < missile->position.x)
+                closestpoint.x = missile->position.x;
+            else if (rotatedcirclecenter.x > missile->position.x + player->missileprops.imgsize.width)
+                closestpoint.x = missile->position.x;
+            else
+                closestpoint.x = rotatedcirclecenter.x;
+
+            if (rotatedcirclecenter.y < missile->position.y)
+                closestpoint.y = missile->position.y;
+            else if (rotatedcirclecenter.y > missile->position.y + player->missileprops.imgsize.height)
+                closestpoint.y = missile->position.y;
+            else
+                closestpoint.y = rotatedcirclecenter.y;
+
+            int distance = twopointsdistance(rotatedcirclecenter, closestpoint);
+            if (distance < enemyiter->entity.hitboxradius)
+            {
+                // ütköznek, missile és enemy törlése
+                SDL_Log("collision");
+            }
+        }
+    }
+    // módosítani a missiles listát a playeren belül
 }
 
 void playerflash(Player *player)

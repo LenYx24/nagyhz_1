@@ -42,8 +42,13 @@ void game(SDL_Event *e, State *state)
   EntityNode *enemies = NULL;
 
   int fireballspawncounter = 0;
-  int fireballcap = 100;
-  double fireballspeed = 5.0f;
+  int enemyspawncounter = 40;
+
+  double fireballspeed = 4.0f;
+  double enemyspeed = 3.0f;
+
+  int spawnrate = 100;
+  int minspawnrate = 30;
   // double fireballspeedcap = 7.0f;
 
   double seconds = 0.0f;
@@ -99,25 +104,34 @@ void game(SDL_Event *e, State *state)
       // új elemek létrehozása
 
       fireballspawncounter++;
-      if (fireballspawncounter == fireballcap)
+      if (fireballspawncounter == spawnrate)
       {
         fireballspawncounter = 0;
-        if (fireballcap > 30)
-          fireballcap--;
+        if (spawnrate > minspawnrate)
+          spawnrate--;
         fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballspeed);
+      }
+
+      enemyspawncounter++;
+      if (enemyspawncounter == spawnrate)
+      {
+        enemyspawncounter = 0;
+        enemies = spawnentity(enemies, enemytexture, player.position, enemyspeed);
       }
 
       // mozgatás
 
       moveplayer(&player);
-      bool followplayer = false;
-      fireballs = moveentities(fireballs, !followplayer);
-      enemies = moveentities(enemies, followplayer);
+      fireballs = moveentities(fireballs);
+      entitychangedir(enemies, player.position);
+      enemies = moveentities(enemies);
       player.missiles = movemissiles(&player);
 
       // ütközések
 
       if (checkcollisioncircles(&player, fireballs))
+        *state = MENU;
+      if (checkcollisioncircles(&player, enemies))
         *state = MENU;
       checkcollisionmissileenemy(&player, enemies);
 
@@ -136,7 +150,7 @@ void game(SDL_Event *e, State *state)
         player.missileprops.cdcounter -= ms / 1000.0;
         if (player.missileprops.cdcounter <= 0.0f)
         {
-          player.missileprops.cdcounter = player.flash.cooldown;
+          player.missileprops.cdcounter = player.missileprops.cooldown;
           player.missileprops.oncd = false;
         }
       }

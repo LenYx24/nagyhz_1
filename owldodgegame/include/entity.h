@@ -66,7 +66,8 @@ typedef struct EntityNode
 
 void moveplayer(Player *player);
 
-EntityNode *moveentities(EntityNode *entities, bool followplayer);
+EntityNode *moveentities(EntityNode *entities);
+void entitychangedir(EntityNode *entities, Point playerpos);
 EntityNode *spawnentity(EntityNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freeentities(EntityNode *entities);
 
@@ -75,7 +76,7 @@ MissileNode *spawnmissile(Player *player);
 void freemissiles(Player *player);
 
 bool checkcollisioncircles(Player *player, EntityNode *entities);
-bool checkcollisionmissileenemy(Player *player, EntityNode *enemies);
+void checkcollisionmissileenemy(Player *player, EntityNode *enemies);
 
 void playerflash(Player *player);
 #endif
