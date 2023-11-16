@@ -13,7 +13,7 @@ void moveplayer(Player *player)
     renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 
-EntityNode *moveentities(EntityNode *entities)
+EntityNode *moveentities(EntityNode *entities, bool followplayer)
 {
     EntityNode *preventity = NULL;
     EntityNode *current = entities;
@@ -128,6 +128,11 @@ bool checkcollisioncircles(Player *player, EntityNode *entities)
     }
     return false;
 }
+bool checkcollisionmissileenemy(Player *player, EntityNode *enemies)
+{
+    return false;
+}
+
 void playerflash(Player *player)
 {
     int x, y;

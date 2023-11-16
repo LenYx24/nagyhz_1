@@ -110,13 +110,16 @@ void game(SDL_Event *e, State *state)
       // mozgatás
 
       moveplayer(&player);
-      fireballs = moveentities(fireballs);
+      bool followplayer = false;
+      fireballs = moveentities(fireballs, !followplayer);
+      enemies = moveentities(enemies, followplayer);
       player.missiles = movemissiles(&player);
 
       // ütközések
 
       if (checkcollisioncircles(&player, fireballs))
         *state = MENU;
+      checkcollisionmissileenemy(&player, enemies);
 
       // játékos képességek
       if (player.flash.oncd)
