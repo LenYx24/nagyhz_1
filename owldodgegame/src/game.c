@@ -170,6 +170,7 @@ void game(SDL_Event *e, State *state)
       break;
     }
   }
+  SDL_Log("round over");
   freeentities(fireballs);
   freeentities(enemies);
   SDL_RemoveTimer(timer);

@@ -59,6 +59,10 @@ void rendertext(Point pos, SDL_Color color, char *text)
   stringRGBA(renderer, pos.x, pos.y, text, color.r, color.g, color.b, color.a);
 }
 
+void rendercircle(Point p, int radius, SDL_Color c)
+{
+  circleRGBA(renderer, p.x, p.y, radius, c.r, c.g, c.b, c.a);
+}
 void renderupdate()
 {
   SDL_RenderPresent(renderer);

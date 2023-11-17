@@ -20,6 +20,7 @@ EntityNode *moveentities(EntityNode *entities)
     while (current != NULL)
     {
         Entity *f = &current->entity;
+        rendercircle(f->position, f->hitboxradius, (SDL_Color){0, 0, 200, 255});
         if (outofscreen(f->position, f->imgsize))
         {
             if (preventity == NULL)
@@ -106,6 +107,7 @@ MissileNode *movemissiles(Player *player)
     while (current != NULL)
     {
         Missile *m = &current->missile;
+        // todo: show hitbox with recttangle
         if (m->distancetraveled >= player->missileprops.range)
         {
             if (prev == NULL)
@@ -219,18 +221,3 @@ void playerflash(Player *player)
     }
     player->position = destpos;
 }
-
-// bool checkcollisionrect(Player *player, EntityNode *fireballs)
-// {
-//     for (EntityNode *current = fireballs; current != NULL; current = current->next)
-//     {
-//         double left = current->fireball.position.x;
-//         double right = left + current->fireball.size.width;
-//         double top = current->fireball.position.y;
-//         double bottom = top + current->fireball.size.height;
-//         if (left <= player->position.x && player->position.x <= right &&
-//             bottom <= player->position.y && player->position.y <= top)
-//             return true;
-//     }
-//     return false;
-// }

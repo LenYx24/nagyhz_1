@@ -14,6 +14,7 @@ void renderbox(Point topleft, Point downright, SDL_Color color);
 void renderrectangle(SDL_Texture *t, Rect dest);
 void renderrectanglerotated(SDL_Texture *t, Rect dest, double rotation);
 void rendertext(Point pos, SDL_Color color, char *text);
+void rendercircle(Point p, int radius, SDL_Color c);
 
 void renderupdate();
 #endif
