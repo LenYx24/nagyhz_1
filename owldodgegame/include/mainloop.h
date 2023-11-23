@@ -3,7 +3,6 @@
 #include "state.h"
 #include "menu.h"
 #include "game.h"
-#include <stdio.h>
 #include <SDL2/SDL.h>
 void loop();
 #endif

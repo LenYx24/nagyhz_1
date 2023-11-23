@@ -2,12 +2,13 @@
 
 void loop()
 {
-  State state = MENU;
+  setmainstate(MENU);
+  setsubmenustate(STARTMENU);
   Uint32 t1, t2 = 0, delta;
   double fps = 144.0;
   double mindelta = 1000 / fps;
   SDL_Event e;
-  while (state != QUIT)
+  while (getmainstate() != QUIT)
   {
     t1 = SDL_GetTicks();
     delta = t1 - t2;
@@ -16,13 +17,16 @@ void loop()
     {
       // SDL_Log("fps: %d", 1000 / delta);
       t2 = t1;
-      if (state == MENU)
+      switch (getmainstate())
       {
-        menu(&e, &state);
-      }
-      else
-      {
-        game(&e, &state);
+      case MENU:
+        menu(&e);
+        break;
+      case GAME:
+        game(&e);
+        break;
+      case QUIT:
+        break;
       }
     }
   }

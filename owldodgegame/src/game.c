@@ -7,7 +7,12 @@ Uint32 update(Uint32 ms, void *param)
   SDL_PushEvent(&ev);
   return ms;
 }
-void game(SDL_Event *e, State *state)
+void gameover()
+{
+  setmainstate(MENU);
+  setsubmenustate(GAMEOVERMENU);
+}
+void game(SDL_Event *e)
 {
   int ms = 10;
   int timer = SDL_AddTimer(ms, update, NULL);
@@ -44,8 +49,8 @@ void game(SDL_Event *e, State *state)
   int fireballspawncounter = 0;
   int enemyspawncounter = 40;
 
-  double fireballspeed = 4.0f;
-  double enemyspeed = 3.0f;
+  double fireballspeed = 4.0f; // gyorsabb mint a játékos
+  double enemyspeed = 2.5f;    // lassabb mint a játékos
 
   int spawnrate = 150;
   int minspawnrate = 20;
@@ -58,119 +63,119 @@ void game(SDL_Event *e, State *state)
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
   renderupdate();
-  while (*state == GAME)
+  while (getmainstate() == GAME)
   {
-    SDL_WaitEvent(e);
-    switch (e->type)
+    while (SDL_PollEvent(e))
     {
-    case SDL_MOUSEBUTTONDOWN:
-      if (e->button.button == SDL_BUTTON_RIGHT)
-        player.destination = (Point){.x = e->button.x, .y = e->button.y};
+      switch (e->type)
+      {
+      case SDL_MOUSEBUTTONDOWN:
+        if (e->button.button == SDL_BUTTON_RIGHT)
+          player.destination = (Point){.x = e->button.x, .y = e->button.y};
 
-      break;
-    case SDL_KEYDOWN:
-      switch (e->key.keysym.sym)
-      {
-      case SDLK_d:
-      {
-        if (!player.flash.oncd)
+        break;
+      case SDL_KEYDOWN:
+        switch (e->key.keysym.sym)
         {
-          playerflash(&player);
+        case SDLK_d:
+        {
+          if (!player.flash.oncd)
+          {
+            playerflash(&player);
+          }
+          player.flash.oncd = true;
+          break;
         }
-        player.flash.oncd = true;
+        case SDLK_q: // lövedék létrehozása
+        {
+          if (!player.missileprops.oncd)
+          {
+            player.missiles = spawnmissile(&player);
+          }
+          player.missileprops.oncd = true;
+          break;
+        }
+        case SDLK_s: // játékos mozgásának megállítása
+        {
+          player.destination = player.position;
+          break;
+        }
+        }
+
+        break;
+
+      case SDL_USEREVENT:
+        renderrectangle(background, backgrounddest); // háttér újratöltése
+
+        // új elemek létrehozása
+
+        fireballspawncounter++;
+        if (fireballspawncounter == spawnrate)
+        {
+          fireballspawncounter = 0;
+          if (spawnrate > minspawnrate)
+            spawnrate--;
+          fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballspeed);
+        }
+
+        enemyspawncounter++;
+        if (enemyspawncounter == spawnrate)
+        {
+          enemyspawncounter = 0;
+          enemies = spawnentity(enemies, enemytexture, player.position, enemyspeed);
+        }
+
+        // mozgatás
+
+        moveplayer(&player);
+        fireballs = moveentities(fireballs);
+        entitychangedir(enemies, player.position);
+        enemies = moveentities(enemies);
+        player.missiles = movemissiles(&player);
+
+        // ütközések
+
+        if (checkcollisioncircles(&player, fireballs) || checkcollisioncircles(&player, enemies))
+          gameover();
+        checkcollisionmissileenemy(&player, &enemies);
+
+        // játékos képességek
+
+        if (player.flash.oncd)
+        {
+          player.flash.cdcounter -= ms / 1000.0;
+          if (player.flash.cdcounter <= 0.0f)
+          {
+            player.flash.cdcounter = player.flash.cooldown;
+            player.flash.oncd = false;
+          }
+        }
+        if (player.missileprops.oncd)
+        {
+          player.missileprops.cdcounter -= ms / 1000.0;
+          if (player.missileprops.cdcounter <= 0.0f)
+          {
+            player.missileprops.cdcounter = player.missileprops.cooldown;
+            player.missileprops.oncd = false;
+          }
+        }
+        showcooldowns(&player);
+
+        // időmérés
+
+        showseconds(seconds);
+        seconds += ms / 100.0; // 10ms * 100ms = 1s
+
+        break;
+      case SDL_QUIT:
+        setmainstate(QUIT);
         break;
       }
-      case SDLK_q: // lövedék létrehozása
-      {
-        if (!player.missileprops.oncd)
-        {
-          player.missiles = spawnmissile(&player);
-        }
-        player.missileprops.oncd = true;
-        break;
-      }
-      case SDLK_s: // játékos mozgásának megállítása
-      {
-        player.destination = player.position;
-        break;
-      }
-      }
-
-      break;
-
-    case SDL_USEREVENT:
-      renderrectangle(background, backgrounddest); // háttér újratöltése
-
-      // új elemek létrehozása
-
-      fireballspawncounter++;
-      if (fireballspawncounter == spawnrate)
-      {
-        fireballspawncounter = 0;
-        if (spawnrate > minspawnrate)
-          spawnrate--;
-        fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballspeed);
-      }
-
-      enemyspawncounter++;
-      if (enemyspawncounter == spawnrate)
-      {
-        enemyspawncounter = 0;
-        enemies = spawnentity(enemies, enemytexture, player.position, enemyspeed);
-      }
-
-      // mozgatás
-
-      moveplayer(&player);
-      fireballs = moveentities(fireballs);
-      entitychangedir(enemies, player.position);
-      enemies = moveentities(enemies);
-      player.missiles = movemissiles(&player);
-
-      // ütközések
-
-      if (checkcollisioncircles(&player, fireballs))
-        *state = MENU;
-      if (checkcollisioncircles(&player, enemies))
-        *state = MENU;
-      checkcollisionmissileenemy(&player, &enemies);
-
-      // játékos képességek
-
-      if (player.flash.oncd)
-      {
-        player.flash.cdcounter -= ms / 1000.0;
-        if (player.flash.cdcounter <= 0.0f)
-        {
-          player.flash.cdcounter = player.flash.cooldown;
-          player.flash.oncd = false;
-        }
-      }
-      if (player.missileprops.oncd)
-      {
-        player.missileprops.cdcounter -= ms / 1000.0;
-        if (player.missileprops.cdcounter <= 0.0f)
-        {
-          player.missileprops.cdcounter = player.missileprops.cooldown;
-          player.missileprops.oncd = false;
-        }
-      }
-      showcooldowns(&player);
-
-      // időmérés
-
-      showseconds(seconds);
-      seconds += ms / 100.0; // 10ms * 100ms = 1s
-
-      // megjelenítő frissítése
-
-      renderupdate();
-
-      break;
-    case SDL_QUIT:
-      *state = QUIT;
-      break;
     }
+
+    // megjelenítő frissítése
+
+    renderupdate();
   }
   SDL_Log("round over");
   freeentities(fireballs);

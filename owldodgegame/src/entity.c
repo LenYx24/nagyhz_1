@@ -178,7 +178,6 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies)
                 missile->position.x,
                 missile->position.y};
             rendercircle(rectcenter, 3.0f, (SDL_Color){0, 255, 0, 255});
-            SDL_Log("%lf", player->missileprops.imgsize.width / 2.0f);
             double m_cos = cos(missile->angle);
             double m_sin = sin(missile->angle);
 

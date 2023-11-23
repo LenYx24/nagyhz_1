@@ -6,5 +6,5 @@
 #include "state.h"
 #include "macros.h"
 #include "overlay.h"
-void game(SDL_Event *e, State *state);
+void game(SDL_Event *e);
 #endif
