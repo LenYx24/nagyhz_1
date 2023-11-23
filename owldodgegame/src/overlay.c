@@ -3,7 +3,7 @@
 void showseconds(double seconds)
 {
     char msstr[30];
-    sprintf(msstr, "masodpercek: %lf", seconds);
+    sprintf(msstr, "tizedmasodpercek: %lf", seconds);
     rendertext((Point){WINDOWWIDTH - 200, 10}, (SDL_Color){255, 255, 255, 255}, msstr);
 }
 void showcooldowns(Player *player)

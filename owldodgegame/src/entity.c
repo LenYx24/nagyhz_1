@@ -107,7 +107,6 @@ MissileNode *movemissiles(Player *player)
     while (current != NULL)
     {
         Missile *m = &current->missile;
-        // todo: show hitbox with recttangle
         if (m->distancetraveled >= player->missileprops.range)
         {
             if (prev == NULL)
@@ -162,23 +161,31 @@ bool checkcollisioncircles(Player *player, EntityNode *entities)
     }
     return false;
 }
-void checkcollisionmissileenemy(Player *player, EntityNode *enemies)
+void checkcollisionmissileenemy(Player *player, EntityNode **enemies)
 {
-    // enemies-t cím szerint átvenni, mert módosítani kell
-    for (EntityNode *enemyiter = enemies; enemyiter != NULL; enemyiter = enemyiter->next)
+    EntityNode *prevenemy = NULL;
+    EntityNode *enemyiter = *enemies;
+    while (enemyiter != NULL)
     {
-        for (MissileNode *missileiter = player->missiles; missileiter != NULL; missileiter = missileiter->next)
+        bool removal = false;
+        MissileNode *prevmissile = NULL;
+        MissileNode *missileiter = player->missiles;
+        while (missileiter != NULL)
         {
             Missile *missile = &missileiter->missile;
             Point circlecenter = enemyiter->entity.position;
             Point rectcenter = {
-                missile->position.x + player->missileprops.imgsize.width / 2,
-                missile->position.y + player->missileprops.imgsize.height / 2};
-            double c = cos(missile->angle);
-            double s = sin(missile->angle);
+                missile->position.x,
+                missile->position.y};
+            rendercircle(rectcenter, 3.0f, (SDL_Color){0, 255, 0, 255});
+            SDL_Log("%lf", player->missileprops.imgsize.width / 2.0f);
+            double m_cos = cos(missile->angle);
+            double m_sin = sin(missile->angle);
+
             Point rotatedcirclecenter = {
-                .x = c * (circlecenter.x - rectcenter.x) - s * (circlecenter.y - rectcenter.y) + rectcenter.y,
-                .y = s * (circlecenter.x - rectcenter.x) + c * (circlecenter.y - rectcenter.y) + rectcenter.y};
+                .x = m_cos * (circlecenter.x - rectcenter.x) - m_sin * (circlecenter.y - rectcenter.y) + rectcenter.x,
+                .y = m_sin * (circlecenter.x - rectcenter.x) + m_cos * (circlecenter.y - rectcenter.y) + rectcenter.y,
+            };
             Point closestpoint;
 
             if (rotatedcirclecenter.x < missile->position.x)
@@ -199,11 +206,50 @@ void checkcollisionmissileenemy(Player *player, EntityNode *enemies)
             if (distance < enemyiter->entity.hitboxradius)
             {
                 // ütköznek, missile és enemy törlése
+                if (prevmissile == NULL) // első elem törlése
+                {
+                    MissileNode *tmp = missileiter->next;
+                    free(missileiter);
+                    missileiter = tmp;
+                    player->missiles = tmp;
+                }
+                else
+                {
+                    prevmissile->next = missileiter->next;
+                    free(missileiter);
+                    missileiter = prevmissile->next;
+                }
+
+                if (prevenemy == NULL) // első elem törlése
+                {
+                    EntityNode *tmp = enemyiter->next;
+                    free(enemyiter);
+                    enemyiter = tmp;
+                    *enemies = tmp;
+                }
+                else
+                {
+                    prevenemy->next = enemyiter->next;
+                    free(enemyiter);
+                    enemyiter = prevenemy->next;
+                }
+                player->missileprops.oncd = false;
+                removal = true;
                 SDL_Log("collision");
             }
+            if (removal == false)
+            {
+                prevmissile = missileiter;
+                missileiter = missileiter->next;
+                break;
+            }
+        }
+        if (removal == false)
+        {
+            prevenemy = enemyiter;
+            enemyiter = enemyiter->next;
         }
     }
-    // módosítani a missiles listát a playeren belül
 }
 
 void playerflash(Player *player)

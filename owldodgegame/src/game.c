@@ -34,7 +34,7 @@ void game(SDL_Event *e, State *state)
                        .oncd = false,
                        .texture = loadimage("resources/missile.png"),
                        .imgsize = (Size){100, 20},
-                       .speed = 7.0f,
+                       .speed = 7.5f,
                    },
                    .missiles = NULL};
 
@@ -47,8 +47,8 @@ void game(SDL_Event *e, State *state)
   double fireballspeed = 4.0f;
   double enemyspeed = 3.0f;
 
-  int spawnrate = 100;
-  int minspawnrate = 30;
+  int spawnrate = 150;
+  int minspawnrate = 20;
   // double fireballspeedcap = 7.0f;
 
   double seconds = 0.0f;
@@ -133,9 +133,10 @@ void game(SDL_Event *e, State *state)
         *state = MENU;
       if (checkcollisioncircles(&player, enemies))
         *state = MENU;
-      checkcollisionmissileenemy(&player, enemies);
+      checkcollisionmissileenemy(&player, &enemies);
 
       // játékos képességek
+
       if (player.flash.oncd)
       {
         player.flash.cdcounter -= ms / 1000.0;
@@ -164,6 +165,7 @@ void game(SDL_Event *e, State *state)
       // megjelenítő frissítése
 
       renderupdate();
+
       break;
     case SDL_QUIT:
       *state = QUIT;

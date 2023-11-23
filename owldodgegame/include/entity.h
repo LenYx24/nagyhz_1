@@ -76,7 +76,7 @@ MissileNode *spawnmissile(Player *player);
 void freemissiles(Player *player);
 
 bool checkcollisioncircles(Player *player, EntityNode *entities);
-void checkcollisionmissileenemy(Player *player, EntityNode *enemies);
+void checkcollisionmissileenemy(Player *player, EntityNode **enemies);
 
 void playerflash(Player *player);
 #endif
