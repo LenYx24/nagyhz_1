@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 #include <stdlib.h>
+#include "SDL2/SDL.h"
 typedef enum MainState
 {
     MENU,
@@ -13,6 +14,12 @@ typedef enum MenuState
     HELPMENU,
     GAMEOVERMENU,
 } MenuState;
+typedef enum Difficulty
+{
+    EASY,
+    MEDIUM,
+    HARD
+} Difficulty;
 typedef struct States
 {
     MainState main;
@@ -20,6 +27,8 @@ typedef struct States
 } States;
 MainState getmainstate();
 MenuState getmenustate();
+Difficulty getdifficulty();
 void setmainstate(MainState state);
 void setsubmenustate(MenuState s);
+void setdifficulty(Difficulty diff);
 #endif

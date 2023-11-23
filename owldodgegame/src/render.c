@@ -2,6 +2,7 @@
 
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
+SDL_Color c_white = {255, 255, 255, 255};
 
 void createwindow(Size windowsize, char *title)
 {

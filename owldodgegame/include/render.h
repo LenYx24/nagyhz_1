@@ -6,6 +6,8 @@
 #include <SDL2/SDL_render.h>
 #include "math_helper.h"
 
+extern SDL_Color c_white;
+
 SDL_Texture *loadimage(char *pathname);
 
 void createwindow(Size windowsize, char *title);

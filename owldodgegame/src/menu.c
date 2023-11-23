@@ -1,7 +1,9 @@
 #include "../include/menu.h"
-#define BUTTONARRSIZE 6
+#define MAINMENU_BTARRSIZE 6
+#define HELPMENU_BTARRSIZE 1
+#define GAMEOVERMENU_BTARRSIZE 6
 
-static Size defaultbtsize = {180, 30};
+static Size defaultbtsize = {200, 40};
 
 void drawbuttons(Button *buttons, int size)
 {
@@ -11,7 +13,7 @@ void drawbuttons(Button *buttons, int size)
     Point downrigth = {buttons[i].pos.x + defaultbtsize.width, buttons[i].pos.y + defaultbtsize.height};
     renderbox(buttons[i].pos, downrigth, buttons[i].bgcolor);
     Point textpoint = (Point){.x = buttons[i].pos.x + padd, .y = buttons[i].pos.y + padd};
-    rendertext(textpoint, (SDL_Color){255, 255, 255, 255}, buttons[i].text);
+    rendertext(textpoint, c_white, buttons[i].text);
   }
 }
 void newgame()
@@ -21,6 +23,7 @@ void newgame()
 void help()
 {
   setsubmenustate(HELPMENU);
+  SDL_Log("set menu to help");
 }
 void back()
 {
@@ -30,29 +33,29 @@ void quit()
 {
   setmainstate(QUIT);
 }
-int row(int r)
+int brow(int r)
 {
   int pad = 20;
   int margin = 20;
   return margin + r * (defaultbtsize.height + pad);
 }
-int col(int c)
+int bcol(int c)
 {
-  int margin = 20;
   int pad = 20;
+  int margin = 20;
   return margin + c * (defaultbtsize.width + pad);
 }
-void resetbtcolors(Button *buttons)
+void resetbtcolors(Button *buttons, int size)
 {
-  for (int i = 0; i < BUTTONARRSIZE; i++)
+  for (int i = 0; i < size; i++)
   {
     buttons[i].bgcolor = (SDL_Color){200, 0, 0, 255};
   }
 }
-void handlehover(SDL_Event *e, Button *buttons)
+void handlehover(SDL_Event *e, Button *buttons, int size)
 {
   Point mousepos = {e->button.x, e->button.y};
-  for (int i = 0; i < BUTTONARRSIZE; i++)
+  for (int i = 0; i < size; i++)
   {
     if (withinbounds((Rect){buttons[i].pos, defaultbtsize}, mousepos))
     {
@@ -61,12 +64,12 @@ void handlehover(SDL_Event *e, Button *buttons)
     }
   }
 }
-void handleclick(SDL_Event *e, Button *buttons)
+void handleclick(SDL_Event *e, Button *buttons, int size)
 {
   if (e->button.button == SDL_BUTTON_LEFT)
   {
     Point mousepos = {e->button.x, e->button.y};
-    for (int i = 0; i < BUTTONARRSIZE; i++)
+    for (int i = 0; i < size; i++)
     {
       if (withinbounds((Rect){buttons[i].pos, defaultbtsize}, mousepos))
       {
@@ -76,72 +79,126 @@ void handleclick(SDL_Event *e, Button *buttons)
     }
   }
 }
-void helpmenu(SDL_Event *e)
+void startmenu(SDL_Event *e)
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
-  Button buttons[BUTTONARRSIZE] = {
-      {{col(0), row(0)}, "Vissza", back},
+
+  Button buttons[MAINMENU_BTARRSIZE] = {
+      {{bcol(0), brow(0)}, "Uj jatek", newgame},
+      {{bcol(0), brow(1)}, "Segitseg", help},
+      {{bcol(0), brow(2)}, "Konnyu", help},
+      {{bcol(1), brow(2)}, "Kozepes", help},
+      {{bcol(2), brow(2)}, "Nehez", help},
+      {{bcol(0), brow(3)}, "Kilepes", quit},
   };
-  rendertext((Point){col(2), row(2)}, (SDL_Color){255, 255, 255, 255}, "Q kepesseg");
-  rendertext((Point){col(3), row(2)}, (SDL_Color){255, 255, 255, 255}, "Kilo egy kek sugar alaku lovedeket, amely ha eltalal egy rossz baglyot, akkor megsemmisiti.");
-  rendertext((Point){col(2), row(2)}, (SDL_Color){255, 255, 255, 255}, "D kepesseg");
-  rendertext((Point){col(3), row(2)}, (SDL_Color){255, 255, 255, 255}, "Egy kisebb tavolsagra teleportalja a karaktert.");
-  renderupdate();
-  while (getmenustate() == HELPMENU)
+  while (getmenustate() == STARTMENU && getmainstate() != QUIT)
   {
     while (SDL_PollEvent(e))
     {
-      resetbtcolors(buttons);
+      resetbtcolors(buttons, MAINMENU_BTARRSIZE);
       switch (e->type)
       {
       case SDL_MOUSEMOTION:
-        handlehover(e, buttons);
+        handlehover(e, buttons, MAINMENU_BTARRSIZE);
         break;
       case SDL_MOUSEBUTTONDOWN:
-        handleclick(e, buttons);
+        handleclick(e, buttons, MAINMENU_BTARRSIZE);
         break;
       case SDL_QUIT:
         setmainstate(QUIT);
         break;
       }
-      drawbuttons(buttons, BUTTONARRSIZE);
+      drawbuttons(buttons, MAINMENU_BTARRSIZE);
+    }
+    renderupdate();
+  }
+}
+void helpmenu(SDL_Event *e)
+{
+  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
+  Button buttons[HELPMENU_BTARRSIZE] = {
+      {{bcol(0), brow(0)}, "Vissza", back},
+  };
+  rendertext((Point){350, 120}, c_white, "Q kepesseg");
+  rendertext((Point){370, 150}, c_white, "Kilo egy kek sugar alaku lovedeket, amely ha eltalal egy ellenseg baglyot, akkor megsemmisiti.");
+  rendertext((Point){350, 200}, c_white, "D kepesseg");
+  rendertext((Point){370, 230}, c_white, "Egy kisebb tavolsagra teleportalja a karaktert.");
+  renderupdate();
+  while (getmenustate() == HELPMENU && getmainstate() != QUIT)
+  {
+    while (SDL_PollEvent(e))
+    {
+      resetbtcolors(buttons, HELPMENU_BTARRSIZE);
+      switch (e->type)
+      {
+      case SDL_MOUSEMOTION:
+        handlehover(e, buttons, HELPMENU_BTARRSIZE);
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        handleclick(e, buttons, HELPMENU_BTARRSIZE);
+        break;
+      case SDL_QUIT:
+        setmainstate(QUIT);
+        break;
+      }
+      drawbuttons(buttons, HELPMENU_BTARRSIZE);
+    }
+    renderupdate();
+  }
+}
+void gameovermenu(SDL_Event *e)
+{
+  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
+  Button buttons[MAINMENU_BTARRSIZE] = {
+      {{bcol(0), brow(0)}, "Ujrakezdes", newgame},
+      {{bcol(0), brow(2)}, "Konnyu", help},
+      {{bcol(1), brow(2)}, "Kozepes", help},
+      {{bcol(2), brow(2)}, "Nehez", help},
+      {{bcol(0), brow(3)}, "Vissza", back},
+  };
+  rendertext((Point){350, 120}, c_white, "Q kepesseg");
+  rendertext((Point){370, 150}, c_white, "Kilo egy kek sugar alaku lovedeket, amely ha eltalal egy ellenseg baglyot, akkor megsemmisiti.");
+  rendertext((Point){350, 200}, c_white, "D kepesseg");
+  rendertext((Point){370, 230}, c_white, "Egy kisebb tavolsagra teleportalja a karaktert.");
+  renderupdate();
+  while (getmenustate() == HELPMENU && getmainstate() != QUIT)
+  {
+    while (SDL_PollEvent(e))
+    {
+      resetbtcolors(buttons, HELPMENU_BTARRSIZE);
+      switch (e->type)
+      {
+      case SDL_MOUSEMOTION:
+        handlehover(e, buttons, HELPMENU_BTARRSIZE);
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        handleclick(e, buttons, HELPMENU_BTARRSIZE);
+        break;
+      case SDL_QUIT:
+        setmainstate(QUIT);
+        break;
+      }
+      drawbuttons(buttons, HELPMENU_BTARRSIZE);
     }
     renderupdate();
   }
 }
 void menu(SDL_Event *e)
 {
-  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
-
-  Button buttons[BUTTONARRSIZE] = {
-      {{col(0), row(0)}, "Uj jatek", newgame},
-      {{col(0), row(1)}, "Segitseg", help},
-      {{col(0), row(2)}, "Konnyu", help},
-      {{col(1), row(2)}, "Kozepes", help},
-      {{col(2), row(2)}, "Nehez", help},
-      {{col(0), row(3)}, "Kilepes", quit},
-  };
-  resetbtcolors(buttons);
   renderupdate();
   while (getmainstate() == MENU)
   {
-    while (SDL_PollEvent(e))
+    switch (getmenustate())
     {
-      resetbtcolors(buttons);
-      switch (e->type)
-      {
-      case SDL_MOUSEMOTION:
-        handlehover(e, buttons);
-        break;
-      case SDL_MOUSEBUTTONDOWN:
-        handleclick(e, buttons);
-        break;
-      case SDL_QUIT:
-        setmainstate(QUIT);
-        break;
-      }
-      drawbuttons(buttons, BUTTONARRSIZE);
+    case STARTMENU:
+      startmenu(e);
+      break;
+    case HELPMENU:
+      helpmenu(e);
+      break;
+    case GAMEOVERMENU:
+      gameovermenu(e);
+      break;
     }
-    renderupdate();
   }
 }
