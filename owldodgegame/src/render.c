@@ -3,6 +3,8 @@
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
 SDL_Color c_white = {255, 255, 255, 255};
+SDL_Color c_btselected = {130, 20, 20, 255};
+SDL_Color c_btbgcolor = {200, 0, 0, 255};
 
 void createwindow(Size windowsize, char *title)
 {

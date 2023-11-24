@@ -4,6 +4,7 @@ void loop()
 {
   setmainstate(MENU);
   setsubmenustate(STARTMENU);
+  setdifficulty(EASY);
   Uint32 t1, t2 = 0, delta;
   double fps = 144.0;
   double mindelta = 1000 / fps;

@@ -266,3 +266,31 @@ void playerflash(Player *player)
     }
     player->position = destpos;
 }
+void setspeedbydiff(SpawnProps *p, int basespeed)
+{
+    switch (getdifficulty())
+    {
+    case EASY:
+        p->speed = basespeed;
+        break;
+    case MEDIUM:
+        p->speed = basespeed * 1.2f;
+        break;
+    case HARD:
+        p->speed = basespeed * 1.84f;
+        break;
+    }
+}
+
+bool updatespawnprops(SpawnProps *p)
+{
+    p->counter += p->incrementer;
+    if (p->counter >= p->rate)
+    {
+        p->counter = 0;
+        if (p->rate > p->lowerlimit)
+            p->rate--;
+        return true;
+    }
+    return false;
+}

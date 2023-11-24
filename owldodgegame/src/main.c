@@ -11,6 +11,7 @@
 #include "../include/render.h"
 #include "../include/mainloop.h"
 #include "../include/macros.h"
+#include "../include/scoreboard.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +20,8 @@ int main(int argc, char *argv[])
   Size windowsize = {WINDOWWIDTH, WINDOWHEIGHT};
   char *title = "bagolyjatek";
   createwindow(windowsize, title);
-  // scoreboard load file
+  // char filename[] = "scoreboard.txt";
+  // loadfromfile(filename);
 
   loop();
 

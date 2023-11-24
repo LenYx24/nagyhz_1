@@ -5,6 +5,7 @@
 
 #include "math_helper.h"
 #include "render.h"
+#include "state.h"
 
 typedef struct Spell
 {
@@ -51,9 +52,11 @@ typedef struct Entity
 {
   Point position;
   Vector2 direction;
+
   Size imgsize;
   int hitboxradius;
   SDL_Texture *texture;
+
   double speed;
   bool followplayer;
 } Entity;
@@ -63,6 +66,15 @@ typedef struct EntityNode
   Entity entity;
   struct EntityNode *next;
 } EntityNode;
+
+typedef struct SpawnProps
+{
+  int rate;
+  int lowerlimit;
+  int counter;
+  int incrementer;
+  int speed;
+} SpawnProps;
 
 void moveplayer(Player *player);
 
@@ -79,4 +91,7 @@ bool checkcollisioncircles(Player *player, EntityNode *entities);
 void checkcollisionmissileenemy(Player *player, EntityNode **enemies);
 
 void playerflash(Player *player);
+
+void setspeedbydiff(SpawnProps *p, int basespeed);
+bool updatespawnprops(SpawnProps *p);
 #endif

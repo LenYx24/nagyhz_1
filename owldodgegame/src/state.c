@@ -1,6 +1,6 @@
 #include "../include/state.h"
-States state;
-Difficulty difficulty;
+States state = {MENU, STARTMENU};
+Difficulty difficulty = EASY;
 MainState getmainstate()
 {
     return state.main;

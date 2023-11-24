@@ -6,6 +6,6 @@ typedef struct Score{
     Difficulty diff;
     char *playername;
 }Score;
-void loadfromfile();
-void savetofile();
+void loadfromfile(char *filename);
+void savetofile(char *filename);
 #endif

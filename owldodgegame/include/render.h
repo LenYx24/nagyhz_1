@@ -7,6 +7,8 @@
 #include "math_helper.h"
 
 extern SDL_Color c_white;
+extern SDL_Color c_btselected;
+extern SDL_Color c_btbgcolor;
 
 SDL_Texture *loadimage(char *pathname);
 

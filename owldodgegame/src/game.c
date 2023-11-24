@@ -7,6 +7,37 @@ Uint32 update(Uint32 ms, void *param)
   SDL_PushEvent(&ev);
   return ms;
 }
+
+void handleinput(Player *player, SDL_Event *e)
+{
+  switch (e->key.keysym.sym)
+  {
+  case SDLK_d:
+  {
+    if (!player->flash.oncd)
+    {
+      playerflash(player);
+    }
+    player->flash.oncd = true;
+    break;
+  }
+  case SDLK_q: // lövedék létrehozása
+  {
+    if (!player->missileprops.oncd)
+    {
+      player->missiles = spawnmissile(player);
+    }
+    player->missileprops.oncd = true;
+    break;
+  }
+  case SDLK_s: // játékos mozgásának megállítása
+  {
+    player->destination = player->position;
+    break;
+  }
+  }
+}
+
 void gameover()
 {
   setmainstate(MENU);
@@ -46,15 +77,10 @@ void game(SDL_Event *e)
   EntityNode *fireballs = NULL;
   EntityNode *enemies = NULL;
 
-  int fireballspawncounter = 0;
-  int enemyspawncounter = 40;
-
-  double fireballspeed = 4.0f; // gyorsabb mint a játékos
-  double enemyspeed = 2.5f;    // lassabb mint a játékos
-
-  int spawnrate = 150;
-  int minspawnrate = 20;
-  // double fireballspeedcap = 7.0f;
+  SpawnProps fireballprops = {.rate = 150, .lowerlimit = 20, .counter = 0, .incrementer = 1};
+  SpawnProps enemyprops = {.rate = 140, .lowerlimit = 30, .counter = 0, .incrementer = 1};
+  setspeedbydiff(&fireballprops, 3.0f);
+  setspeedbydiff(&enemyprops, 2.5f);
 
   double seconds = 0.0f;
 
@@ -63,6 +89,7 @@ void game(SDL_Event *e)
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
   renderupdate();
+
   while (getmainstate() == GAME)
   {
     while (SDL_PollEvent(e))
@@ -75,32 +102,7 @@ void game(SDL_Event *e)
 
         break;
       case SDL_KEYDOWN:
-        switch (e->key.keysym.sym)
-        {
-        case SDLK_d:
-        {
-          if (!player.flash.oncd)
-          {
-            playerflash(&player);
-          }
-          player.flash.oncd = true;
-          break;
-        }
-        case SDLK_q: // lövedék létrehozása
-        {
-          if (!player.missileprops.oncd)
-          {
-            player.missiles = spawnmissile(&player);
-          }
-          player.missileprops.oncd = true;
-          break;
-        }
-        case SDLK_s: // játékos mozgásának megállítása
-        {
-          player.destination = player.position;
-          break;
-        }
-        }
+        handleinput(&player, e);
 
         break;
 
@@ -108,30 +110,21 @@ void game(SDL_Event *e)
         renderrectangle(background, backgrounddest); // háttér újratöltése
 
         // új elemek létrehozása
+        if (updatespawnprops(&fireballprops))
+          fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballprops.speed);
 
-        fireballspawncounter++;
-        if (fireballspawncounter == spawnrate)
-        {
-          fireballspawncounter = 0;
-          if (spawnrate > minspawnrate)
-            spawnrate--;
-          fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballspeed);
-        }
-
-        enemyspawncounter++;
-        if (enemyspawncounter == spawnrate)
-        {
-          enemyspawncounter = 0;
-          enemies = spawnentity(enemies, enemytexture, player.position, enemyspeed);
-        }
+        if (updatespawnprops(&enemyprops))
+          enemies = spawnentity(enemies, enemytexture, player.position, enemyprops.speed);
 
         // mozgatás
 
         moveplayer(&player);
+        player.missiles = movemissiles(&player);
+
         fireballs = moveentities(fireballs);
+
         entitychangedir(enemies, player.position);
         enemies = moveentities(enemies);
-        player.missiles = movemissiles(&player);
 
         // ütközések
 
@@ -174,13 +167,16 @@ void game(SDL_Event *e)
     }
 
     // megjelenítő frissítése
-
     renderupdate();
   }
+
   SDL_Log("round over");
+  // felszabadítások
   freeentities(fireballs);
   freeentities(enemies);
+
   SDL_RemoveTimer(timer);
+
   SDL_DestroyTexture(background);
   SDL_DestroyTexture(fireballtexture);
   SDL_DestroyTexture(enemytexture);
