@@ -13,7 +13,7 @@ void moveplayer(Player *player)
     renderrectangle(player->texture, (Rect){gettopleftpoint(player->position, player->imgsize), player->imgsize});
 }
 
-EntityNode *moveentities(EntityNode *entities)
+EntityNode *moveentities(EntityNode *entities, bool rotatedimage)
 {
     EntityNode *preventity = NULL;
     EntityNode *current = entities;
@@ -39,8 +39,7 @@ EntityNode *moveentities(EntityNode *entities)
         }
         else
         {
-            int speed = f->speed;
-            Vector2 v = {.x = f->direction.x * speed, .y = f->direction.y * speed};
+            Vector2 v = {.x = f->direction.x * f->speed, .y = f->direction.y * f->speed};
             f->position = addvectortopoint(f->position, v);
             renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
             preventity = current;

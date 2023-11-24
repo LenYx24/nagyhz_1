@@ -121,10 +121,12 @@ void game(SDL_Event *e)
         moveplayer(&player);
         player.missiles = movemissiles(&player);
 
-        fireballs = moveentities(fireballs);
+        bool rotatedimage = true;
+
+        fireballs = moveentities(fireballs, rotatedimage);
 
         entitychangedir(enemies, player.position);
-        enemies = moveentities(enemies);
+        enemies = moveentities(enemies, !rotatedimage);
 
         // ütközések
 
@@ -169,9 +171,8 @@ void game(SDL_Event *e)
     // megjelenítő frissítése
     renderupdate();
   }
-
-  SDL_Log("round over");
   // felszabadítások
+
   freeentities(fireballs);
   freeentities(enemies);
 

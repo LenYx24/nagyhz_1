@@ -116,6 +116,8 @@ void startmenu(SDL_Event *e)
       {{bcol(0), brow(3)}, "Kilepes", quit},
   };
   int offset = 2;
+  drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
+  renderupdate();
   while (getmenustate() == STARTMENU && getmainstate() == MENU)
   {
     while (SDL_PollEvent(e))
@@ -185,6 +187,7 @@ void gameovermenu(SDL_Event *e)
       {{bcol(0), brow(3)}, "Vissza", back},
   };
   int diffbtoffset = 1;
+  drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
   renderupdate();
   while (getmenustate() == GAMEOVERMENU && getmainstate() == MENU)
   {

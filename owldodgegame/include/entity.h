@@ -78,7 +78,7 @@ typedef struct SpawnProps
 
 void moveplayer(Player *player);
 
-EntityNode *moveentities(EntityNode *entities);
+EntityNode *moveentities(EntityNode *entities, bool rotatedimage);
 void entitychangedir(EntityNode *entities, Point playerpos);
 EntityNode *spawnentity(EntityNode *list, SDL_Texture *t, Point playerpos, double speed);
 void freeentities(EntityNode *entities);
