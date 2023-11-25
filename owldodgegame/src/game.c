@@ -88,6 +88,8 @@ void game(SDL_Event *e)
   SDL_Texture *fireballtexture = loadimage("resources/fireball.png");
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
+  resetcurrentpoint();
+
   renderupdate();
 
   while (getmainstate() == GAME)
@@ -159,7 +161,15 @@ void game(SDL_Event *e)
         // időmérés
 
         showseconds(seconds);
-        seconds += ms / 100.0; // 10ms * 100ms = 1s
+        seconds += ms / 1000.0;
+
+        // mivel a seconds változó mindig minimum 0.01-el növekszik, ezért elég 10^2-el eltolni, így biztosan egész számot kapunk
+        // majd 100-al osztva, megkapjuk, hogy eltelt-e egy másodperc
+        if ((int)(seconds * 100) % 100 == 0)
+        {
+          incrementcurrentscore(50);
+        }
+        showpoints();
 
         break;
       case SDL_QUIT:
@@ -175,7 +185,7 @@ void game(SDL_Event *e)
 
   freeentities(fireballs);
   freeentities(enemies);
-
+  // freemissiles
   SDL_RemoveTimer(timer);
 
   SDL_DestroyTexture(background);

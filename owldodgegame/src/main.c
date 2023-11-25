@@ -1,6 +1,5 @@
 #include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -20,12 +19,16 @@ int main(int argc, char *argv[])
   Size windowsize = {WINDOWWIDTH, WINDOWHEIGHT};
   char *title = "bagolyjatek";
   createwindow(windowsize, title);
-  // char filename[] = "scoreboard.txt";
-  // loadfromfile(filename);
+  initfont("fonts/LiberationSerif-Regular.ttf", 32);
+
+  char filename[] = "scoreboard.txt";
+  loadscoresfromfile(filename);
 
   loop();
 
-  // scoreboard save
+  savescorestofile(filename);
+  freescoreboard();
   SDL_Quit();
+
   return 0;
 }

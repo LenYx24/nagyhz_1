@@ -2,10 +2,15 @@
 #define MENU_H
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+
+#include "../lib/debugmalloc.h"
+
 #include "render.h"
 #include "state.h"
 #include "math_helper.h"
 #include "macros.h"
+#include "scoreboard.h"
+
 typedef struct Button
 {
     Point pos;

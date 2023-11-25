@@ -41,7 +41,10 @@ EntityNode *moveentities(EntityNode *entities, bool rotatedimage)
         {
             Vector2 v = {.x = f->direction.x * f->speed, .y = f->direction.y * f->speed};
             f->position = addvectortopoint(f->position, v);
-            renderrectangle(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize});
+            double angle = getangle(v);
+            if (!rotatedimage)
+                angle = 0;
+            renderrectanglerotated(f->texture, (Rect){gettopleftpoint(f->position, f->imgsize), f->imgsize}, angle);
             preventity = current;
             current = current->next;
         }
@@ -233,7 +236,7 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies)
                 }
                 player->missileprops.oncd = false;
                 removal = true;
-                SDL_Log("collision");
+                incrementcurrentscore(10);
             }
             if (removal == false)
             {

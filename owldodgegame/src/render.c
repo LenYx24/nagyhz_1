@@ -2,13 +2,15 @@
 
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
+static TTF_Font *font = NULL;
+
 SDL_Color c_white = {255, 255, 255, 255};
 SDL_Color c_btselected = {130, 20, 20, 255};
 SDL_Color c_btbgcolor = {200, 0, 0, 255};
 
 void createwindow(Size windowsize, char *title)
 {
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+  if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     SDL_Log("Nem indithato az SDL: %s", SDL_GetError());
     exit(1);
@@ -28,6 +30,16 @@ void createwindow(Size windowsize, char *title)
     exit(1);
   }
   SDL_RenderClear(renderer);
+}
+void initfont(char *fonttype, int size)
+{
+  TTF_Init();
+  font = TTF_OpenFont(fonttype, size);
+  if (font == NULL)
+  {
+    SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
+    exit(1);
+  }
 }
 
 SDL_Texture *loadimage(char *pathname)
@@ -69,4 +81,128 @@ void rendercircle(Point p, int radius, SDL_Color c)
 void renderupdate()
 {
   SDL_RenderPresent(renderer);
+}
+
+/* Beolvas egy szoveget a billentyuzetrol.
+ * A rajzolashoz hasznalt font es a megjelenito az utolso parameterek.
+ * Az elso a tomb, ahova a beolvasott szoveg kerul.
+ * A masodik a maximális hossz, ami beolvasható.
+ * A visszateresi erteke logikai igaz, ha sikerult a beolvasas. */
+bool input_text(char *dest, size_t size, SDL_Rect rect, SDL_Color bgcolor, SDL_Color textcolor)
+{
+  /* Ez tartalmazza az aktualis szerkesztest */
+  char composition[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
+  composition[0] = '\0';
+  /* Ezt a kirajzolas kozben hasznaljuk */
+  char textandcomposition[size + SDL_TEXTEDITINGEVENT_TEXT_SIZE + 1];
+  /* Max hasznalhato szelesseg */
+  int maxw = rect.w - 2;
+  int maxh = rect.h - 2;
+
+  dest[0] = '\0';
+
+  bool enter = false;
+  bool kilep = false;
+
+  SDL_StartTextInput();
+  while (!kilep && !enter)
+  {
+    /* doboz kirajzolasa */
+    boxRGBA(renderer, rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1, bgcolor.r, bgcolor.g, bgcolor.b, 255);
+    rectangleRGBA(renderer, rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1, textcolor.r, textcolor.g, textcolor.b, 255);
+    /* szoveg kirajzolasa */
+    int w;
+    strcpy(textandcomposition, dest);
+    strcat(textandcomposition, composition);
+    if (textandcomposition[0] != '\0')
+    {
+      SDL_Surface *felirat = TTF_RenderUTF8_Blended(font, textandcomposition, textcolor);
+      SDL_Texture *felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+      SDL_Rect cel = {rect.x, rect.y, felirat->w < maxw ? felirat->w : maxw, felirat->h < maxh ? felirat->h : maxh};
+      SDL_RenderCopy(renderer, felirat_t, NULL, &cel);
+      SDL_FreeSurface(felirat);
+      SDL_DestroyTexture(felirat_t);
+      w = cel.w;
+    }
+    else
+    {
+      w = 0;
+    }
+    /* kurzor kirajzolasa */
+    if (w < maxw)
+    {
+      vlineRGBA(renderer, rect.x + w + 2, rect.y + 2, rect.y + rect.h - 3, textcolor.r, textcolor.g, textcolor.b, 192);
+    }
+    /* megjeleniti a képernyon az eddig rajzoltakat */
+    SDL_RenderPresent(renderer);
+
+    SDL_Event event;
+    SDL_WaitEvent(&event);
+    switch (event.type)
+    {
+    /* Kulonleges karakter */
+    case SDL_KEYDOWN:
+      if (event.key.keysym.sym == SDLK_BACKSPACE)
+      {
+        int textlen = strlen(dest);
+        do
+        {
+          if (textlen == 0)
+          {
+            break;
+          }
+          if ((dest[textlen - 1] & 0x80) == 0x00)
+          {
+            /* Egy bajt */
+            dest[textlen - 1] = 0x00;
+            break;
+          }
+          if ((dest[textlen - 1] & 0xC0) == 0x80)
+          {
+            /* Bajt, egy tobb-bajtos szekvenciabol */
+            dest[textlen - 1] = 0x00;
+            textlen--;
+          }
+          if ((dest[textlen - 1] & 0xC0) == 0xC0)
+          {
+            /* Egy tobb-bajtos szekvencia elso bajtja */
+            dest[textlen - 1] = 0x00;
+            break;
+          }
+        } while (true);
+      }
+      if (event.key.keysym.sym == SDLK_RETURN)
+      {
+        enter = true;
+      }
+      break;
+
+    /* A feldolgozott szoveg bemenete */
+    case SDL_TEXTINPUT:
+      if (strlen(dest) + strlen(event.text.text) < size)
+      {
+        strcat(dest, event.text.text);
+      }
+
+      /* Az eddigi szerkesztes torolheto */
+      composition[0] = '\0';
+      break;
+
+    /* Szoveg szerkesztese */
+    case SDL_TEXTEDITING:
+      strcpy(composition, event.edit.text);
+      break;
+
+    case SDL_QUIT:
+      /* visszatesszuk a sorba ezt az eventet, mert
+       * sok mindent nem tudunk vele kezdeni */
+      SDL_PushEvent(&event);
+      kilep = true;
+      break;
+    }
+  }
+
+  /* igaz jelzi a helyes beolvasast; = ha enter miatt allt meg a ciklus */
+  SDL_StopTextInput();
+  return enter;
 }

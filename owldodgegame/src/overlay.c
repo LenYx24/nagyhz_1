@@ -3,14 +3,19 @@
 void showseconds(double seconds)
 {
     char msstr[30];
-    sprintf(msstr, "tizedmasodpercek: %lf", seconds);
-    rendertext((Point){WINDOWWIDTH - 200, 10}, (SDL_Color){255, 255, 255, 255}, msstr);
+    sprintf(msstr, "tizedmasodpercek: %.2lf", seconds);
+    rendertext((Point){WINDOWWIDTH - 250, 10}, c_white, msstr);
+}
+void showpoints()
+{
+    char str[30];
+    sprintf(str, "pontok: %.2lf", getcurrentpoint());
+    rendertext((Point){WINDOWWIDTH - 200, 40}, c_white, str);
 }
 void showcooldowns(Player *player)
 {
     SDL_Color green = {0, 200, 0, 255};
     SDL_Color red = {200, 0, 0, 255};
-    SDL_Color white = {0, 0, 0, 255};
 
     SDL_Color flashcolor = green;
     SDL_Color missilecolor = green;
@@ -30,7 +35,7 @@ void showcooldowns(Player *player)
     Point startp = {halfwindowwidth - (fullwidth / 2), WINDOWHEIGHT - padbottom - rectyoffest};
     Point rectdownright = {startp.x + rectlength, WINDOWHEIGHT - padbottom + rectyoffest};
 
-    rendertext(startp, white, "Q:");
+    rendertext(startp, c_white, "Q:");
     startp.x += textlength + padx;
     rectdownright.x += textlength + padx;
 
@@ -38,7 +43,7 @@ void showcooldowns(Player *player)
     startp.x += rectlength + padx;
     rectdownright.x += rectlength + padx;
 
-    rendertext(startp, white, "D:");
+    rendertext(startp, c_white, "D:");
     startp.x += textlength + padx;
     rectdownright.x += textlength + padx;
 

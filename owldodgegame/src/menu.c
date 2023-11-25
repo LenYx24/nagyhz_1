@@ -103,6 +103,30 @@ void handleclick(SDL_Event *e, Button *buttons, int size)
     }
   }
 }
+void scoreboard()
+{
+  int col1 = 500;
+  int px = 100;
+  int height = 400;
+  int py = 40;
+  rendertext((Point){col1, height}, c_white, "helyezes");
+  rendertext((Point){col1 + px, height}, c_white, "pontszam");
+  rendertext((Point){col1 + 2 * px, height}, c_white, "felhasznalonev");
+  height += py;
+  int i = 1;
+  for (ScoreNode *cr = getscores(); cr != NULL; cr = cr->next)
+  {
+    char place[20];
+    sprintf(place, "%d", i);
+    char point[20];
+    sprintf(point, "%lf", cr->score.points);
+    rendertext((Point){col1, height}, c_white, place);
+    rendertext((Point){col1 + px, height}, c_white, point);
+    rendertext((Point){col1 + 2 * px, height}, c_white, cr->score.playername);
+    i++;
+    height += py;
+  }
+}
 void startmenu(SDL_Event *e)
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
@@ -176,18 +200,38 @@ void helpmenu(SDL_Event *e)
     renderupdate();
   }
 }
+
+static char playername[50];
+
 void gameovermenu(SDL_Event *e)
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
   Button buttons[MAINMENU_BTARRSIZE] = {
       {{bcol(0), brow(0)}, "Ujrakezdes", newgame},
-      {{bcol(0), brow(2)}, "Konnyu", seteasymode},
-      {{bcol(1), brow(2)}, "Kozepes", setmediummode},
-      {{bcol(2), brow(2)}, "Nehez", sethardmode},
-      {{bcol(0), brow(3)}, "Vissza", back},
+      {{bcol(0), brow(1)}, "Konnyu", seteasymode},
+      {{bcol(1), brow(1)}, "Kozepes", setmediummode},
+      {{bcol(2), brow(1)}, "Nehez", sethardmode},
+      {{bcol(0), brow(2)}, "Vissza", back},
   };
   int diffbtoffset = 1;
-  drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
+  if (strlen(playername) == 0)
+  {
+    rendertext((Point){20, 20}, c_white, "Nev: ");
+    size_t length = 50;
+    SDL_Rect pos = {.x = 20, .y = 50, .w = 200, .h = 30};
+    bool inputsaved = input_text(playername, length, pos, c_btbgcolor, c_white);
+    if (inputsaved)
+    {
+      insertnewscore(playername);
+    }
+    renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
+  }
+  else
+  {
+    drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
+    insertnewscore(playername);
+  }
+  scoreboard();
   renderupdate();
   while (getmenustate() == GAMEOVERMENU && getmainstate() == MENU)
   {

@@ -3,7 +3,10 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
+#include "../lib/debugmalloc.h"
+
 #include "math_helper.h"
+#include "scoreboard.h"
 #include "render.h"
 #include "state.h"
 

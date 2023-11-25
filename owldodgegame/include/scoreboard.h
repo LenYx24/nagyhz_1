@@ -1,11 +1,28 @@
 #ifndef SCOREBOARD_H
 #define SCOREBOARD_H
+#include <stdbool.h>
+
+#include "../lib/debugmalloc.h"
+
 #include "state.h"
-typedef struct Score{
-    int score;
-    Difficulty diff;
+
+typedef struct Score
+{
+    double points;
     char *playername;
-}Score;
-void loadfromfile(char *filename);
-void savetofile(char *filename);
+} Score;
+typedef struct ScoreNode
+{
+    Score score;
+    struct ScoreNode *prev, *next;
+} ScoreNode;
+
+void loadscoresfromfile(char *filename);
+void savescorestofile(char *filename);
+ScoreNode *getscores();
+double getcurrentpoint();
+void incrementcurrentscore(int point);
+void resetcurrentpoint();
+void insertnewscore(char *name);
+void freescoreboard();
 #endif
