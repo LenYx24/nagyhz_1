@@ -1,26 +1,5 @@
 #include "../include/math_helper.h"
 
-Point substracttwopoints(Point p1, Point p2) {
-  return (Point){p2.x - p1.x, p2.y - p1.y};
-}
-bool withinbounds(Rect r, Point p) {
-  int left = r.pos.x;
-  int right = left + r.size.width;
-  int top = r.pos.y;
-  int bottom = top + r.size.height;
-  return (left <= p.x && p.x <= right) && (top <= p.y && p.y <= bottom);
-}
-
-bool outofscreen(Point pos, Size size) {
-  int left = pos.x;
-  int right = left + size.width;
-  int top = pos.y;
-  int bottom = top + size.height;
-  int leftscreen = 0;
-  int topscreen = 0;
-  return bottom <= topscreen || WINDOWHEIGHT <= top || right <= leftscreen ||
-         WINDOWWIDTH <= left;
-}
 Point randomspawnpoint() {
   Point p;
   int margin = 10;
@@ -39,30 +18,49 @@ Point randomspawnpoint() {
   }
   return p;
 }
-
-int twopointsdistance(Point p1, Point p2) {
-  return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
-}
-
-int vectorlength(Vector2 v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
-
-Vector2 vectorfromtwopoints(Point start, Point end) {
-  return (Vector2){.x = end.x - start.x, .y = end.y - start.y};
-}
 Point gettopleftpoint(Point pos, Size size) {
   return (Point){pos.x - size.width / 2.0f, pos.y - size.height / 2.0f};
 }
 Point addvectortopoint(Point p, Vector2 v) {
   return (Point){.x = p.x + v.x, .y = p.y + v.y};
 }
+
+Point rectdownrightpoint(Rect rect) {
+  return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};
+}
+
+Vector2 vectorfromtwopoints(Point start, Point end) {
+  return (Vector2){.x = end.x - start.x, .y = end.y - start.y};
+}
 Vector2 normalizevector(Vector2 v) {
   int distance = sqrt(pow(v.x, 2) + pow(v.y, 2));
   return (Vector2){.x = v.x / distance, .y = v.y / distance};
 }
 
-Point rectdownrightpoint(Rect rect) {
-  return (Point){rect.pos.x + rect.size.width, rect.pos.y + rect.size.height};
+bool withinbounds(Rect r, Point p) {
+  int left = r.pos.x;
+  int right = left + r.size.width;
+  int top = r.pos.y;
+  int bottom = top + r.size.height;
+  return (left <= p.x && p.x <= right) && (top <= p.y && p.y <= bottom);
 }
+
+bool outofscreen(Point pos, Size size) {
+  int left = pos.x;
+  int right = left + size.width;
+  int top = pos.y;
+  int bottom = top + size.height;
+  int leftscreen = 0;
+  int topscreen = 0;
+  return bottom <= topscreen || WINDOWHEIGHT <= top || right <= leftscreen ||
+         WINDOWWIDTH <= left;
+}
+
+int twopointsdistance(Point p1, Point p2) {
+  return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+
+int vectorlength(Vector2 v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
 
 double getangle(Vector2 v) {
   v.y = -v.y;
