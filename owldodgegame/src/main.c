@@ -3,6 +3,7 @@
 
 #include "../include/entity.h"
 #include "../include/game.h"
+#include "../include/macros.h"
 #include "../include/math_helper.h"
 #include "../include/menu.h"
 #include "../include/state.h"

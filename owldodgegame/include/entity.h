@@ -185,7 +185,7 @@ EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props);
 void updatespellcooldown(Spell *spell, int ms);
 /**
  * @brief Felszabadítja az entitások tartalmazó láncolt listát
- *
+ * A program végén meg kell hívni
  * @param entities a felszabadítandó lista elejére mutató pointer
  */
 void freeentities(EntityNode *entities);
@@ -210,7 +210,7 @@ MissileNode *spawnmissile(Player *player);
 MissileNode *movemissiles(Player *player);
 /**
  * @brief felszabadítja a lövedékeket
- *
+ * A program végén meg kell hívni
  * @param player a játékosra mutató pointer (inicializálni kell a lövedékek
  * listát)
  */

@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "macros.h"
 #include "state.h"
 /**
  * @brief Egy pontot jelképez a koordinátarendszerben valós típusú x és y

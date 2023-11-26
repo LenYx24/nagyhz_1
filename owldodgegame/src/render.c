@@ -29,9 +29,9 @@ void createwindow(Size windowsize, char *title) {
   }
   SDL_RenderClear(renderer);
 }
-void initfont(char *fonttype, int size) {
+void initfont(char *pathname, int size) {
   TTF_Init();
-  font = TTF_OpenFont(fonttype, size);
+  font = TTF_OpenFont(pathname, size);
   if (font == NULL) {
     SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
     exit(1);
@@ -46,6 +46,10 @@ SDL_Texture *loadimage(char *pathname) {
   }
   return img;
 }
+void renderbox(Point topleft, Point downright, SDL_Color color) {
+  boxRGBA(renderer, topleft.x, topleft.y, downright.x, downright.y, color.r,
+          color.g, color.b, color.a);
+}
 void renderrectangle(SDL_Texture *t, Rect dest) {
   SDL_Rect r = {dest.pos.x, dest.pos.y, dest.size.width, dest.size.height};
   SDL_RenderCopy(renderer, t, NULL, &r);
@@ -54,10 +58,6 @@ void renderrectangle(SDL_Texture *t, Rect dest) {
 void renderrectanglerotated(SDL_Texture *t, Rect dest, double angle) {
   SDL_Rect r = {dest.pos.x, dest.pos.y, dest.size.width, dest.size.height};
   SDL_RenderCopyEx(renderer, t, NULL, &r, angle, NULL, SDL_FLIP_NONE);
-}
-void renderbox(Point topleft, Point downright, SDL_Color color) {
-  boxRGBA(renderer, topleft.x, topleft.y, downright.x, downright.y, color.r,
-          color.g, color.b, color.a);
 }
 
 void rendertext(Point pos, SDL_Color color, char *text) {
@@ -69,11 +69,6 @@ void rendercircle(Point p, int radius, SDL_Color c) {
 }
 void renderupdate() { SDL_RenderPresent(renderer); }
 
-/* Beolvas egy szoveget a billentyuzetrol.
- * A rajzolashoz hasznalt font es a megjelenito az utolso parameterek.
- * Az elso a tomb, ahova a beolvasott szoveg kerul.
- * A masodik a maximális hossz, ami beolvasható.
- * A visszateresi erteke logikai igaz, ha sikerult a beolvasas. */
 bool input_text(char *dest, size_t size, SDL_Rect rect, SDL_Color bgcolor,
                 SDL_Color textcolor) {
   /* Ez tartalmazza az aktualis szerkesztest */

@@ -7,25 +7,29 @@ static double hardmultiplier = 2.0f;
 void loadscoresfromfile(char *filename) {
   FILE *f;
   f = fopen(filename, "r");
-  for (int i = 0; i < 5; i++) {
-    char row[256];
-    if (fgets(row, 256, f) != NULL) {
-      ScoreNode *s = (ScoreNode *)malloc(sizeof(ScoreNode));
-      // adatbetöltés
-      double pts;
-      sscanf(row, "%lf;%s", &pts, s->score.playername);
-      s->score.points = pts;
+  if (f != NULL) {
+    for (int i = 0; i < 5; i++) {
+      char row[256];
+      if (fgets(row, 256, f) != NULL) {
+        ScoreNode *s = (ScoreNode *)malloc(sizeof(ScoreNode));
+        // adatbetöltés
+        double pts;
+        sscanf(row, "%lf;%s", &pts, s->score.playername);
+        s->score.points = pts;
 
-      s->next = scores;
-      s->prev = NULL;
+        s->next = scores;
+        s->prev = NULL;
 
-      if (scores != NULL) {
-        scores->prev = s;
-      }
+        if (scores != NULL) {
+          scores->prev = s;
+        }
 
-      scores = s;
-    } else
-      break;
+        scores = s;
+      } else
+        break;
+    }
+  } else {
+    f = fopen(filename, "w");
   }
 
   fclose(f);
