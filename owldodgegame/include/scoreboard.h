@@ -44,7 +44,7 @@ void savescoreboardtofile(char *filename);
  * @brief Visszaadja a modul által tárolt láncolt lista első elemére mutató
  * pointert
  *
- * @return ScoreNode*
+ * @return ScoreNode* a láncolt lista
  */
 ScoreNode *getscores();
 /**

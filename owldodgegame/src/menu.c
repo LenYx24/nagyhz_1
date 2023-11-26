@@ -17,6 +17,9 @@ void drawbuttons(Button *buttons, int size) {
     rendertext(textpoint, c_white, buttons[i].text);
   }
 }
+void resetbackground() {
+  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, c_menubg);
+}
 void newgame() { setmainstate(GAME); }
 void help() { setsubmenustate(HELPMENU); }
 void seteasymode(Button *b) {
@@ -32,14 +35,16 @@ void sethardmode(Button *b) {
   setdifficulty(HARD);
 }
 void newname() {
+  resetbackground();
   rendertext((Point){20, 20}, c_white,
              "Add meg az uj felhasznaloneved (maximum 50 karakter): ");
   char currentname[31 + 51];
   sprintf(currentname, "jelenlegi felhasznaloneved: %s", playername);
-  rendertext((Point){20, 20}, c_white, currentname);
+  rendertext((Point){20, 50}, c_white, currentname);
   size_t length = 50;
-  SDL_Rect pos = {.x = 20, .y = 50, .w = 200, .h = 30};
+  SDL_Rect pos = {.x = 20, .y = 100, .w = 200, .h = 30};
   input_text(playername, length, pos, c_btbg, c_white);
+  resetbackground();
 }
 void back() { setsubmenustate(STARTMENU); }
 void quit() { setmainstate(QUIT); }
@@ -209,7 +214,7 @@ void gameovermenu() {
     drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
     insertnewscore(playername);
   }
-  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, c_menubg);
+  resetbackground();
   scoreboard();
   renderupdate();
   SDL_Event e;
@@ -238,7 +243,7 @@ void gameovermenu() {
 void menu() {
   renderupdate();
   while (getmainstate() == MENU) {
-    renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, c_menubg);
+    resetbackground();
     switch (getmenustate()) {
     case STARTMENU:
       startmenu();

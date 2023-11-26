@@ -52,7 +52,7 @@ typedef struct Rect {
   Size size;
 } Rect;
 /**
- * @brief Létrehoz a pálya szélein (egyg picivel beljebb) egy véletlenszerűen
+ * @brief Létrehoz a pálya szélein (egy picivel beljebb) véletlenszerűen
  * generált koordinátát
  *
  * @return Point

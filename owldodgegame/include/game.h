@@ -5,7 +5,7 @@
  * @brief A játékban egy kör lefutásáért felelős modul
  * Miután véget ért egy kör, átállítja a program állapotat menüre, vagy
  * kilépésre Az összes dinamikusan foglalt memóriaterületet felszabadítja
- * magától A főbb csomópont a megjelenítő és az adatművelettel foglalkozó
+ * magától. A főbb csomópont a megjelenítő és az adatművelettel foglalkozó
  * modulok között
  *
  */

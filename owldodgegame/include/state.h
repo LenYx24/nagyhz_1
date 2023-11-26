@@ -38,7 +38,7 @@ typedef struct States {
 } States;
 /**
  * @brief Visszaadja a főállapotának jelenlegi értékét
- * Alapértelmezetten
+ *
  * @return MainState
  */
 MainState getmainstate();

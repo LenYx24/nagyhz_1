@@ -141,12 +141,12 @@ void moveplayer(Player *player);
 /**
  * @brief végrehajta a villanás képességet
  * Az egér irányába, egy bizonyos távolságon belülre teleportálja a karaktert
- * @param player structra mutató pointer
+ * @param player a játékos struktúrára mutató pointer
  */
 void playerflash(Player *player);
 
 /**
- * @brief
+ * @brief Megváltoztatja az összes entitás pozícióját
  *
  * @param entities entitásokat tartalmazó láncolt lista
  * @param rotatedimage el legyen-e forgatva a megjelenített kép?
