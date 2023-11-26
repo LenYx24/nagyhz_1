@@ -7,8 +7,10 @@ static TTF_Font *font = NULL;
 SDL_Color c_white = {255, 255, 255, 255};
 SDL_Color c_green = {0, 200, 0, 255};
 SDL_Color c_red = {200, 0, 0, 255};
+SDL_Color c_menubg = {20, 20, 20, 255};
+SDL_Color c_btbg = {200, 0, 0, 255};
+SDL_Color c_btbghover = {50, 0, 0, 255};
 SDL_Color c_btselected = {130, 20, 20, 255};
-SDL_Color c_btbgcolor = {200, 0, 0, 255};
 
 void createwindow(Size windowsize, char *title) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -37,6 +39,7 @@ void initfont(char *pathname, int size) {
     exit(1);
   }
 }
+void closefont() { TTF_CloseFont(font); }
 
 SDL_Texture *loadimage(char *pathname) {
   SDL_Texture *img = IMG_LoadTexture(renderer, pathname);

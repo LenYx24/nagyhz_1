@@ -92,7 +92,7 @@ void game() {
 
   double seconds = 0.0f;
 
-  SDL_Texture *background = loadimage("resources/map.png");
+  SDL_Texture *background = loadimage("resources/map.jpg");
   SDL_Texture *fireballtexture = loadimage("resources/fireball.png");
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 

@@ -40,7 +40,6 @@ EntityNode *moveentities(EntityNode *entities, bool rotatedimage) {
 
   while (current != NULL) {
     GameObject *f = &current->entity;
-    rendercircle(f->position, f->hitboxradius, (SDL_Color){0, 0, 200, 255});
     if (outofscreen(f->position, f->imgsize)) {
       if (preventity == NULL) {
         EntityNode *newfirst = current->next;
@@ -182,7 +181,6 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies) {
       Missile *missile = &missileiter->missile;
       Point circlecenter = enemyiter->entity.position;
       Point rectcenter = {missile->position.x, missile->position.y};
-      rendercircle(rectcenter, 3.0f, (SDL_Color){0, 255, 0, 255});
       double m_cos = cos(missile->angle);
       double m_sin = sin(missile->angle);
 

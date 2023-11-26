@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 
   savescoreboardtofile(filename);
   freescoreboard();
+  closefont();
   SDL_Quit();
 
   return 0;

@@ -66,7 +66,6 @@ void insertnewscore(char *name) {
   ScoreNode *newnode = (ScoreNode *)malloc(sizeof(ScoreNode));
   newnode->score = (Score){currentpoint};
   strcpy(newnode->score.playername, name);
-  SDL_Log("%s", newnode->score.playername);
   newnode->next = NULL;
   newnode->prev = NULL;
   if (scores == NULL) {
@@ -79,9 +78,6 @@ void insertnewscore(char *name) {
       numofscores++;
       last = last->next;
     }
-    // SDL_Log("numofscores: %d", numofscores);
-    // SDL_Log("beszurando: %s;%lf", newnode->score.playername,
-    // newnode->score.points);
     for (ScoreNode *current = scores; current != NULL;
          current = current->next) {
       if (current->score.points < currentpoint) {
@@ -105,7 +101,6 @@ void insertnewscore(char *name) {
           free(last);
           tmp->next = NULL;
         }
-        // SDL_Log("inserted");
         break;
       }
     }

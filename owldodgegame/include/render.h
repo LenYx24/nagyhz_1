@@ -18,8 +18,10 @@
 extern SDL_Color c_white;
 extern SDL_Color c_green;
 extern SDL_Color c_red;
+extern SDL_Color c_menubg;
+extern SDL_Color c_btbg;
+extern SDL_Color c_btbghover;
 extern SDL_Color c_btselected;
-extern SDL_Color c_btbgcolor;
 /**
  * @brief Inicializálja az ablakot és a megjelenítőt.
  * Ha hibába ütközik, akkor kiírja a konzolra és kilép a program.
@@ -30,11 +32,16 @@ extern SDL_Color c_btbgcolor;
 void createwindow(Size windowsize, char *title);
 /**
  * @brief Betölti az adott betűtípust
- *
+ * A program végén meg kell hívni a closefont függvényt
  * @param pathname a betűtípushoz vezető útvonal
  * @param size a betűtípus mérete
  */
 void initfont(char *fonttype, int size);
+/**
+ * @brief Bezárja a betöltött betűtípust
+ *
+ */
+void closefont();
 /**
  * @brief Betölti egy texturúba a képet
  * Ha nem sikerült betölteni a képet akkor kiírja a hibát a konzolra és
