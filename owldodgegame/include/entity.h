@@ -163,16 +163,25 @@ EntityNode *moveentities(EntityNode *entities, bool rotatedimage);
  */
 void entitychangedir(EntityNode *entities, Point playerpos);
 /**
- * @brief
- *
+ * @brief létrehoz egy új entitást a megadott tulajdonságok alapján egy
+ * véletlenszerűen generált pozícióba. Az entitás a játékos irányába indul el.
+ * Ezt az entitást hozzáfűzi az entitásokat tartalmazó láncolt lista elejére
  * @param list
  * @param playerpos a játékos
- * @param *props az új entitás sebessége
+ * @param *props az új entitás alaptulajdonságait tartalmazó gameobject, a
+ * következő változókat kell benne definiálni: speed, texture, imgsize,
+ * hitboxradius
  * @return EntityNode* a láncolt lista elejére mutató pointert adja vissza (el
  * kell tárolni az értékét, és felszabadítani később a hívónak)
  */
 EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props);
-void updatespell(Spell *spell, int ms);
+/**
+ * @brief
+ *
+ * @param spell
+ * @param ms
+ */
+void updatespellcooldown(Spell *spell, int ms);
 void freeentities(EntityNode *entities);
 
 MissileNode *spawnmissile(Player *player);

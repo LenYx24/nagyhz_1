@@ -89,7 +89,7 @@ EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props) {
   newentity->entity = e;
   return newentity;
 }
-void updatespell(Spell *spell, int ms) {
+void updatespellcooldown(Spell *spell, int ms) {
   if (spell->cooldown.oncd) {
     spell->cooldown.cdcounter -= ms / 1000.0;
     if (spell->cooldown.cdcounter <= 0.0f) {

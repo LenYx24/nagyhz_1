@@ -157,8 +157,8 @@ void game() {
 
         // játékos képességek
 
-        updatespell(&player.flash, ms);
-        updatespell(&player.missileprops, ms);
+        updatespellcooldown(&player.flash, ms);
+        updatespellcooldown(&player.missileprops, ms);
 
         // játékfelületi elemek
 
