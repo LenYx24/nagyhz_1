@@ -1,24 +1,45 @@
 #include "../include/entity.h"
 
 void moveplayer(Player *player) {
-  int distance = twopointsdistance(player->position, player->destination);
-  Vector2 destposvect = normalizevector(
-      vectorfromtwopoints(player->position, player->destination));
-  double speed = player->speed;
-  if (distance > speed) {
-    player->position.x += speed * destposvect.x;
-    player->position.y += speed * destposvect.y;
-  }
-  renderrectangle(player->texture,
-                  (Rect){gettopleftpoint(player->position, player->imgsize),
-                         player->imgsize});
-}
+  GameObject *character = &player->character;
 
+  int distance = twopointsdistance(character->position, player->destination);
+  player->character.direction = normalizevector(
+      vectorfromtwopoints(character->position, player->destination));
+
+  if (distance > character->speed) {
+    character->position.x += character->speed * character->direction.x;
+    character->position.y += character->speed * character->direction.y;
+  }
+  renderrectangle(
+      character->texture,
+      (Rect){gettopleftpoint(character->position, character->imgsize),
+             character->imgsize});
+}
+void playerflash(Player *player) {
+  int x, y;
+  SDL_GetMouseState(&x, &y);
+  Point destpos = {(double)x, (double)y};
+  int distance = twopointsdistance(player->character.position, destpos);
+
+  // ha a hatótávon kívűlre szeretne teleportálni,akkor ugyanabba az irányba, de
+  // közelebbi helyre fogja elteleportálni
+  if (distance >= player->flash.range) {
+    double ratio = player->flash.range / (double)distance;
+    double destx =
+        player->character.position.x * (1 - ratio) + (ratio * destpos.x);
+    double desty =
+        player->character.position.y * (1 - ratio) + (ratio * destpos.y);
+    destpos = (Point){destx, desty};
+  }
+  player->character.position = destpos;
+}
 EntityNode *moveentities(EntityNode *entities, bool rotatedimage) {
   EntityNode *preventity = NULL;
   EntityNode *current = entities;
+
   while (current != NULL) {
-    Entity *f = &current->entity;
+    GameObject *f = &current->entity;
     rendercircle(f->position, f->hitboxradius, (SDL_Color){0, 0, 200, 255});
     if (outofscreen(f->position, f->imgsize)) {
       if (preventity == NULL) {
@@ -56,28 +77,24 @@ void entitychangedir(EntityNode *entities, Point playerpos) {
   }
 }
 
-EntityNode *spawnentity(EntityNode *list, SDL_Texture *ftexture,
-                        Point playerpos, double speed) {
+EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props) {
   EntityNode *newentity = (EntityNode *)malloc(sizeof(EntityNode));
   newentity->next = list;
   Point spawnpoint = randomspawnpoint();
   Vector2 dest = normalizevector(vectorfromtwopoints(spawnpoint, playerpos));
 
-  Entity e = {.position = spawnpoint,
-              .direction = dest,
-              .hitboxradius = 42,
-              .imgsize = {85, 85},
-              .texture = ftexture,
-              .speed = speed};
+  GameObject e = props;
+  e.position = spawnpoint;
+  e.direction = dest;
   newentity->entity = e;
   return newentity;
 }
 void updatespell(Spell *spell, int ms) {
-  if (spell->oncd) {
-    spell->cdcounter -= ms / 1000.0;
-    if (spell->cdcounter <= 0.0f) {
-      spell->cdcounter = spell->cooldown;
-      spell->oncd = false;
+  if (spell->cooldown.oncd) {
+    spell->cooldown.cdcounter -= ms / 1000.0;
+    if (spell->cooldown.cdcounter <= 0.0f) {
+      spell->cooldown.cdcounter = spell->cooldown.cd;
+      spell->cooldown.oncd = false;
     }
   }
 }
@@ -95,9 +112,9 @@ MissileNode *spawnmissile(Player *player) {
   Point mousepos = {(double)x, (double)y};
   MissileNode *newmissile = (MissileNode *)malloc(sizeof(MissileNode));
   newmissile->next = player->missiles;
-  Vector2 dir = normalizevector(
-      vectorfromtwopoints(player->position, (Point){mousepos.x, mousepos.y}));
-  newmissile->missile = (Missile){.position = player->position,
+  Vector2 dir = normalizevector(vectorfromtwopoints(
+      player->character.position, (Point){mousepos.x, mousepos.y}));
+  newmissile->missile = (Missile){.position = player->character.position,
                                   .direction = dir,
                                   .distancetraveled = 0,
                                   .angle = getangle(dir)};
@@ -147,9 +164,9 @@ void freemissiles(Player *player) {
 bool checkcollisioncircles(Player *player, EntityNode *entities) {
   for (EntityNode *current = entities; current != NULL;
        current = current->next) {
-    Entity *f = &current->entity;
-    int distance = twopointsdistance(f->position, player->position);
-    if (distance <= f->hitboxradius + player->hitboxradius)
+    GameObject *f = &current->entity;
+    int distance = twopointsdistance(f->position, player->character.position);
+    if (distance <= f->hitboxradius + player->character.hitboxradius)
       return true;
   }
   return false;
@@ -219,7 +236,7 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies) {
           free(enemyiter);
           enemyiter = prevenemy->next;
         }
-        player->missileprops.oncd = false;
+        player->missileprops.cooldown.oncd = false;
         removal = true;
         incrementcurrentscore(10);
       }
@@ -236,29 +253,16 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies) {
   }
 }
 
-void playerflash(Player *player) {
-  int x, y;
-  SDL_GetMouseState(&x, &y);
-  Point destpos = {(double)x, (double)y};
-  int distance = twopointsdistance(player->position, destpos);
-  if (distance >= player->flash.range) {
-    double ratio = player->flash.range / (double)distance;
-    double destx = player->position.x * (1 - ratio) + (ratio * destpos.x);
-    double desty = player->position.y * (1 - ratio) + (ratio * destpos.y);
-    destpos = (Point){destx, desty};
-  }
-  player->position = destpos;
-}
 void setspeedbydiff(SpawnProps *p, double basespeed) {
   switch (getdifficulty()) {
   case EASY:
-    p->speed = basespeed;
+    p->initspeed = basespeed;
     break;
   case MEDIUM:
-    p->speed = basespeed * 1.2f;
+    p->initspeed = basespeed * 1.2f;
     break;
   case HARD:
-    p->speed = basespeed * 1.84f;
+    p->initspeed = basespeed * 1.84f;
     break;
   }
 }

@@ -10,25 +10,26 @@ Uint32 update(Uint32 ms, void *param) {
 void handleinput(Player *player, SDL_Keycode keycode) {
   switch (keycode) {
   case SDLK_d: {
-    if (!player->flash.oncd) // ha nincs töltési időn a képesség
+    if (!player->flash.cooldown.oncd) // ha nincs töltési időn a képesség
     {
-      player->flash.oncd = true;
+      player->flash.cooldown.oncd = true;
       playerflash(player);
     }
     break;
   }
   case SDLK_q: // lövedék létrehozása
   {
-    if (!player->missileprops.oncd) // ha nincs töltési időn a képesség
+    if (!player->missileprops.cooldown.oncd) // ha nincs töltési időn a képesség
     {
-      player->missileprops.oncd = true;
+      player->missileprops.cooldown.oncd = true;
       player->missiles = spawnmissile(player);
     }
     break;
   }
   case SDLK_s: // játékos mozgásának megállítása
   {
-    player->destination = player->position;
+    player->character.direction = (Vector2){0, 0};
+    player->destination = player->character.position;
     break;
   }
   }
@@ -40,32 +41,41 @@ void game() {
 
   Rect backgrounddest = {(Point){0, 0}, (Size){WINDOWWIDTH, WINDOWHEIGHT}};
 
-  Player player = {.position = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
-                   .destination = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
+  Player player = {
+      .character =
+          {
+              .position = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
+              .direction = {0, 0},
+              .hitboxradius = 40,
+              .speed = 2.7f,
 
-                   .hitboxradius = 40,
-                   .speed = 2.7f,
-
-                   .imgsize = {100, 100},
-                   .texture = loadimage("resources/player.png"),
-
-                   .flash =
-                       (Spell){
-                           .cooldown = 3.0f,
-                           .range = 200.0f,
-                           .oncd = false,
-                           .cdcounter = 3.0f,
-                       },
-                   .missileprops =
-                       (Spell){
-                           .cooldown = 1.0f,
-                           .range = 500.0f,
-                           .oncd = true,
-                           .texture = loadimage("resources/missile.png"),
-                           .imgsize = (Size){100, 20},
-                           .speed = 7.5f,
-                       },
-                   .missiles = NULL};
+              .imgsize = {100, 100},
+              .texture = loadimage("resources/player.png"),
+          },
+      .destination = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
+      .flash =
+          (Spell){
+              .cooldown =
+                  {
+                      .cd = 3.0f,
+                      .oncd = false,
+                      .cdcounter = 3.0f,
+                  },
+              .range = 200.0f,
+          },
+      .missileprops =
+          (Spell){
+              .cooldown =
+                  {
+                      .cd = 1.0f,
+                      .oncd = true,
+                  },
+              .range = 500.0f,
+              .texture = loadimage("resources/missile.png"),
+              .imgsize = (Size){100, 20},
+              .speed = 7.5f,
+          },
+      .missiles = NULL};
 
   EntityNode *fireballs = NULL;
   EntityNode *enemies = NULL;
@@ -103,13 +113,23 @@ void game() {
         renderrectangle(background, backgrounddest); // háttér újratöltése
 
         // új entitások létrehozása
-        if (updatespawnprops(&fireballprops))
-          fireballs = spawnentity(fireballs, fireballtexture, player.position,
-                                  fireballprops.speed);
+        if (updatespawnprops(&fireballprops)) {
+          GameObject fireballobjectprops = {.hitboxradius = 42,
+                                            .imgsize = {85, 85},
+                                            .texture = fireballtexture,
+                                            .speed = fireballprops.initspeed};
+          fireballs = spawnentity(fireballs, player.character.position,
+                                  fireballobjectprops);
+        }
 
-        if (updatespawnprops(&enemyprops))
-          enemies = spawnentity(enemies, enemytexture, player.position,
-                                enemyprops.speed);
+        if (updatespawnprops(&enemyprops)) {
+          GameObject enemyobjectprops = {.hitboxradius = 38,
+                                         .imgsize = {80, 80},
+                                         .texture = fireballtexture,
+                                         .speed = fireballprops.initspeed};
+          enemies =
+              spawnentity(enemies, player.character.position, enemyobjectprops);
+        }
 
         // mozgatás
 
@@ -120,7 +140,7 @@ void game() {
 
         fireballs = moveentities(fireballs, rotatedimage);
 
-        entitychangedir(enemies, player.position);
+        entitychangedir(enemies, player.character.position);
         enemies = moveentities(enemies, !rotatedimage);
 
         // ütközések
@@ -176,6 +196,6 @@ void game() {
   SDL_DestroyTexture(background);
   SDL_DestroyTexture(fireballtexture);
   SDL_DestroyTexture(enemytexture);
-  SDL_DestroyTexture(player.texture);
+  SDL_DestroyTexture(player.character.texture);
   SDL_DestroyTexture(player.missileprops.texture);
 }

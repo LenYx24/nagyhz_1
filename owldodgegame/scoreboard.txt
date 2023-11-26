@@ -1,5 +1,3 @@
-840.000000;qasdfdasfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-610.000000;
-390.000000;
-400.000000;
-540.000000;
+220.000000;lee
+165.000000;leny
+180.000000;asdf

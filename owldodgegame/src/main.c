@@ -1,17 +1,15 @@
-#include <time.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 
 #include "../include/entity.h"
-#include "../include/math_helper.h"
-#include "../include/state.h"
-#include "../include/menu.h"
 #include "../include/game.h"
+#include "../include/math_helper.h"
+#include "../include/menu.h"
+#include "../include/state.h"
 
 #include "../lib/debugmalloc.h"
 
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   srand((unsigned)time(0));
 
   // az ablak inicializálása
@@ -32,16 +30,13 @@ int main(int argc, char *argv[])
   double fps = 144.0;
   double mindelta = 1000 / fps;
 
-  while (getmainstate() != QUIT)
-  {
+  while (getmainstate() != QUIT) {
     t1 = SDL_GetTicks();
     deltatime = t1 - t2;
 
-    if (deltatime > mindelta)
-    {
+    if (deltatime > mindelta) {
       t2 = t1;
-      switch (getmainstate())
-      {
+      switch (getmainstate()) {
       case MENU:
         menu();
         break;
