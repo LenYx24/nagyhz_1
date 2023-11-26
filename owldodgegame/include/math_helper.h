@@ -3,29 +3,25 @@
 #define PI 3.1416
 
 #include <SDL2/SDL.h>
-#include <stdbool.h>
-#include <time.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "state.h"
 
-typedef struct Point
-{
+typedef struct Point {
   double x, y;
 } Point;
 
-typedef struct Vector2
-{
+typedef struct Vector2 {
   double x, y;
 } Vector2;
 
-typedef struct Size
-{
+typedef struct Size {
   int width, height;
 } Size;
-typedef struct Rect
-{
+typedef struct Rect {
   Point pos;
   Size size;
 } Rect;

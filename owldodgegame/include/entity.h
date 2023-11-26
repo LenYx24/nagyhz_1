@@ -4,7 +4,7 @@
  * @file entity.h
  * @brief A játékban az entitások/játékosképességek létrehozásáért, mozgásáért
  * és felszabadításáért felelős modul Itt vannak definiálva az entitásokhoz
- * köthető structok Egyes függvények visszatérési értékének a felszabadítása a
+ * köthető struktúrák Egyes függvények visszatérési értékének a felszabadítása a
  * hívóra van bízva, de a felszabadításért vannak segédfüggvények ebben a
  * modulban Ha entitást mozgat, akkor kommunikál a render modullal és felel
  * azért, hogy megjelenjen a mozgás a képernyőn
@@ -35,7 +35,7 @@ typedef struct Cooldown {
 } Cooldown;
 /**
  * @struct Spell
- * @brief A játékos egy képességhez tartozó tulajdonságokat tároló struct
+ * @brief A játékos egy képességhez tartozó tulajdonságokat tároló struktúra
  * Egy képességhez közösen tartozó tulajdonságokat tárol, tehát több képesség
  * esetén ezek a tulajdonságokat érvényesek mindegyikre
  */
@@ -51,7 +51,7 @@ typedef struct Spell {
 
 /**
  * @struct Missile
- * @brief A játékos egy képességét, a lövedéket tároló struct
+ * @brief A játékos egy képességét, a lövedéket tároló struktúra
  * Egy adott lövedék tulajdonságait tárolja
  */
 
@@ -67,7 +67,7 @@ typedef struct Missile {
 
 /**
  * @struct MissileNode
- * @brief A lövedékeket tároló láncolt lista egy elemét leíró struct
+ * @brief A lövedékeket tároló láncolt lista egy elemét leíró struktúra
  */
 typedef struct MissileNode {
   Missile missile;          /**< maga a lövedék adatai */
@@ -89,7 +89,7 @@ typedef struct GameOjbect {
 
 /**
  * @struct Player
- * @brief A játékost és az ahhoz tartozó összes adatot tároló struct
+ * @brief A játékost és az ahhoz tartozó összes adatot tároló struktúra
  */
 
 typedef struct Player {
@@ -104,7 +104,7 @@ typedef struct Player {
 
 /**
  * @struct Entity
- * @brief Az egyes ellenségek vagy tűzgolyók adatainak tárolására levő struct
+ * @brief Az egyes ellenségek vagy tűzgolyók adatainak tárolására levő struktúra
  */
 
 typedef struct EntityNode {
@@ -116,7 +116,7 @@ typedef struct EntityNode {
 
 /**
  * @struct SpawnProps
- * @brief Az egyes entitások létrehozásának tulajdonságait tároló struct
+ * @brief Az egyes entitások létrehozásának tulajdonságait tároló struktúra
  * Előírja, hogy milyen körülmények között jönnek létre ezek az entitások
  */
 typedef struct SpawnProps {
@@ -135,7 +135,7 @@ typedef struct SpawnProps {
  * @brief A játékos mozgatását végző függvény
  * Frissíti a játékos pozícióját a sebessége és az iránya alapján, emellett a
  * render modul segítségével kirajzoltatja az új pozíción lévő karaktert
- * @param player structra mutató
+ * @param player a játékos struktúrára mutató pointer
  */
 void moveplayer(Player *player);
 /**
@@ -176,21 +176,82 @@ void entitychangedir(EntityNode *entities, Point playerpos);
  */
 EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props);
 /**
- * @brief
+ * @brief frissíti a képesség töltési idejét a megadott milliszekundumot
+ * figyelembe véve
  *
- * @param spell
- * @param ms
+ * @param spell a játékos képességére mutató pointer
+ * @param ms az a miliszekundumérték, amely közönként lefut a userevent
  */
 void updatespellcooldown(Spell *spell, int ms);
+/**
+ * @brief Felszabadítja az entitások tartalmazó láncolt listát
+ *
+ * @param entities a felszabadítandó lista elejére mutató pointer
+ */
 void freeentities(EntityNode *entities);
 
+/**
+ * @brief létrehoz egy lövedéket
+ * A kezdőpozíciója a lövedéknek a játékos, és az egér irányába indul el
+ * @param player a játékosra mutató pointer (inicializálni kell a lövedékek
+ * listát)
+ * @return MissileNode* a láncolt lista elejére mutató pointert adja vissza (el
+ * kell tárolni az értékét, és felszabadítani később a hívónak)
+ */
 MissileNode *spawnmissile(Player *player);
+/**
+ * @brief mozgatja a lövedékeket
+ * Mozgatja a lövedékeket, és ha megtették a maximálisan megtehető útat, akkor
+ * felszabadítja és kitörli őket a listából
+ * @param player a játékosra mutató pointer
+ * @return MissileNode* a láncolt lista elejére mutató pointert adja vissza (el
+ * kell tárolni az értékét, és felszabadítani később a hívónak)
+ */
 MissileNode *movemissiles(Player *player);
+/**
+ * @brief felszabadítja a lövedékeket
+ *
+ * @param player a játékosra mutató pointer (inicializálni kell a lövedékek
+ * listát)
+ */
 void freemissiles(Player *player);
 
+/**
+ * @brief Megnézi, hogy a játékos ütközött-e valamilyen entitással
+ *
+ * @param player a játékosra mutató pointer
+ * @param entities az entitás láncolt listára mutató pointer
+ * @return boolean igaz értékkel tér vissza, ha ütközött egy entitással, és
+ * hamis értékkel, ha egyikkel sem ütközött
+ */
 bool checkcollisioncircles(Player *player, EntityNode *entities);
+/**
+ * @brief Megnézi, hogy ütköztek-e a játékos lövedékei az entitásokkal
+ * ha ütköztek, akkor az adott lövedék és entitás megsemmisíti egymást, tehát
+ * felszabadítódnak és kitörlődnek a láncolt listájukból
+ * @param player a játékosra mutató pointer
+ * @param enemies az entitás láncolt listára mutató pointer
+ */
 void checkcollisionmissileenemy(Player *player, EntityNode **enemies);
 
+/**
+ * @brief Ez a függvény beállítja, hogy milyen sebessége legyen egyes nehézségi
+ * fokozatok mellett a spawnprops struktúrának
+ *
+ * @param p az adott spawnprops struktúrára mutató pointer, amelynek a sebesség
+ * változója fog megváltozni
+ * @param basespeed az alapsebességérték
+ */
 void setspeedbydiff(SpawnProps *p, double basespeed);
+/**
+ * @brief frissíti az adott spawnprops struktúra számlálóját
+ * ha a számláló elérte a rate (gyakoriság) változó értékét, akkor alaphelyzetbe
+ * állítja a számlálót, és a rate változót csökkenti egyel az előbbi esetben,
+ * mivel a számláló elérte a kívánt értéket, ezért igazzal tér vissza, vagyis
+ * létre lehet hozni egy új entitást
+ * @param p a spawnprops struktúrára mutató pointer
+ * @return boolean ha a számláló elszámolt a rate változóig, akkor igazzal tér
+ * vissza, ha még nem akkor hamissal
+ */
 bool updatespawnprops(SpawnProps *p);
 #endif
