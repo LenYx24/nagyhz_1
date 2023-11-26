@@ -62,6 +62,7 @@ void insertnewscore(char *name) {
   ScoreNode *newnode = (ScoreNode *)malloc(sizeof(ScoreNode));
   newnode->score = (Score){currentpoint};
   strcpy(newnode->score.playername, name);
+  SDL_Log("%s", newnode->score.playername);
   newnode->next = NULL;
   newnode->prev = NULL;
   if (scores == NULL) {

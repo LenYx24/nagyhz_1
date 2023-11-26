@@ -40,6 +40,7 @@ void game() {
   int timer = SDL_AddTimer(ms, update, NULL);
 
   Rect backgrounddest = {(Point){0, 0}, (Size){WINDOWWIDTH, WINDOWHEIGHT}};
+  Size owlsize = {80, 80};
 
   Player player = {
       .character =
@@ -49,7 +50,7 @@ void game() {
               .hitboxradius = 40,
               .speed = 2.7f,
 
-              .imgsize = {100, 100},
+              .imgsize = owlsize,
               .texture = loadimage("resources/player.png"),
           },
       .destination = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
@@ -114,8 +115,8 @@ void game() {
 
         // új entitások létrehozása
         if (updatespawnprops(&fireballprops)) {
-          GameObject fireballobjectprops = {.hitboxradius = 42,
-                                            .imgsize = {85, 85},
+          GameObject fireballobjectprops = {.hitboxradius = 36,
+                                            .imgsize = {75, 75},
                                             .texture = fireballtexture,
                                             .speed = fireballprops.initspeed};
           fireballs = spawnentity(fireballs, player.character.position,
@@ -123,10 +124,10 @@ void game() {
         }
 
         if (updatespawnprops(&enemyprops)) {
-          GameObject enemyobjectprops = {.hitboxradius = 38,
-                                         .imgsize = {80, 80},
-                                         .texture = fireballtexture,
-                                         .speed = fireballprops.initspeed};
+          GameObject enemyobjectprops = {.hitboxradius = 42,
+                                         .imgsize = owlsize,
+                                         .texture = enemytexture,
+                                         .speed = enemyprops.initspeed};
           enemies =
               spawnentity(enemies, player.character.position, enemyobjectprops);
         }
