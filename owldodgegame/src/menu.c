@@ -127,7 +127,7 @@ void scoreboard()
     height += py;
   }
 }
-void startmenu(SDL_Event *e)
+void startmenu()
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
 
@@ -142,19 +142,20 @@ void startmenu(SDL_Event *e)
   int offset = 2;
   drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
   renderupdate();
+  SDL_Event e;
   while (getmenustate() == STARTMENU && getmainstate() == MENU)
   {
-    while (SDL_PollEvent(e))
+    while (SDL_PollEvent(&e))
     {
       resetbtcolors(buttons, MAINMENU_BTARRSIZE);
       setselectedbt(buttons, MAINMENU_BTARRSIZE, getdifficulty() + offset);
-      switch (e->type)
+      switch (e.type)
       {
       case SDL_MOUSEMOTION:
-        handlehover(e, buttons, MAINMENU_BTARRSIZE);
+        handlehover(&e, buttons, MAINMENU_BTARRSIZE);
         break;
       case SDL_MOUSEBUTTONDOWN:
-        handleclick(e, buttons, MAINMENU_BTARRSIZE);
+        handleclick(&e, buttons, MAINMENU_BTARRSIZE);
         break;
       case SDL_QUIT:
         setmainstate(QUIT);
@@ -166,7 +167,7 @@ void startmenu(SDL_Event *e)
     renderupdate();
   }
 }
-void helpmenu(SDL_Event *e)
+void helpmenu()
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
   Button buttons[HELPMENU_BTARRSIZE] = {
@@ -177,18 +178,19 @@ void helpmenu(SDL_Event *e)
   rendertext((Point){350, 200}, c_white, "D kepesseg");
   rendertext((Point){370, 230}, c_white, "Egy kisebb tavolsagra teleportalja a karaktert.");
   renderupdate();
+  SDL_Event e;
   while (getmenustate() == HELPMENU && getmainstate() == MENU)
   {
-    while (SDL_PollEvent(e))
+    while (SDL_PollEvent(&e))
     {
       resetbtcolors(buttons, HELPMENU_BTARRSIZE);
-      switch (e->type)
+      switch (e.type)
       {
       case SDL_MOUSEMOTION:
-        handlehover(e, buttons, HELPMENU_BTARRSIZE);
+        handlehover(&e, buttons, HELPMENU_BTARRSIZE);
         break;
       case SDL_MOUSEBUTTONDOWN:
-        handleclick(e, buttons, HELPMENU_BTARRSIZE);
+        handleclick(&e, buttons, HELPMENU_BTARRSIZE);
         break;
       case SDL_QUIT:
         setmainstate(QUIT);
@@ -203,7 +205,7 @@ void helpmenu(SDL_Event *e)
 
 static char playername[50];
 
-void gameovermenu(SDL_Event *e)
+void gameovermenu()
 {
   renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, (SDL_Color){20, 20, 20, 255});
   Button buttons[MAINMENU_BTARRSIZE] = {
@@ -233,19 +235,20 @@ void gameovermenu(SDL_Event *e)
   }
   scoreboard();
   renderupdate();
+  SDL_Event e;
   while (getmenustate() == GAMEOVERMENU && getmainstate() == MENU)
   {
-    while (SDL_PollEvent(e))
+    while (SDL_PollEvent(&e))
     {
       resetbtcolors(buttons, GAMEOVERMENU_BTARRSIZE);
       setselectedbt(buttons, GAMEOVERMENU_BTARRSIZE, getdifficulty() + diffbtoffset);
-      switch (e->type)
+      switch (e.type)
       {
       case SDL_MOUSEMOTION:
-        handlehover(e, buttons, GAMEOVERMENU_BTARRSIZE);
+        handlehover(&e, buttons, GAMEOVERMENU_BTARRSIZE);
         break;
       case SDL_MOUSEBUTTONDOWN:
-        handleclick(e, buttons, GAMEOVERMENU_BTARRSIZE);
+        handleclick(&e, buttons, GAMEOVERMENU_BTARRSIZE);
         break;
       case SDL_QUIT:
         setmainstate(QUIT);
@@ -257,7 +260,7 @@ void gameovermenu(SDL_Event *e)
     renderupdate();
   }
 }
-void menu(SDL_Event *e)
+void menu()
 {
   renderupdate();
   while (getmainstate() == MENU)
@@ -265,13 +268,13 @@ void menu(SDL_Event *e)
     switch (getmenustate())
     {
     case STARTMENU:
-      startmenu(e);
+      startmenu();
       break;
     case HELPMENU:
-      helpmenu(e);
+      helpmenu();
       break;
     case GAMEOVERMENU:
-      gameovermenu(e);
+      gameovermenu();
       break;
     }
   }

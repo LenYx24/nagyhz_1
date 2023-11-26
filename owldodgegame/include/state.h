@@ -1,29 +1,20 @@
 #ifndef STATE_H
 #define STATE_H
-#include <stdlib.h>
 #include "SDL2/SDL.h"
-typedef enum MainState
-{
-    MENU,
-    GAME,
-    QUIT
-} MainState;
-typedef enum MenuState
-{
-    STARTMENU,
-    HELPMENU,
-    GAMEOVERMENU,
+#include <stdlib.h>
+
+#define WINDOWWIDTH 1280
+#define WINDOWHEIGHT 960
+typedef enum MainState { MENU, GAME, QUIT } MainState;
+typedef enum MenuState {
+  STARTMENU,
+  HELPMENU,
+  GAMEOVERMENU,
 } MenuState;
-typedef enum Difficulty
-{
-    EASY,
-    MEDIUM,
-    HARD
-} Difficulty;
-typedef struct States
-{
-    MainState main;
-    MenuState menu;
+typedef enum Difficulty { EASY, MEDIUM, HARD } Difficulty;
+typedef struct States {
+  MainState main;
+  MenuState menu;
 } States;
 MainState getmainstate();
 MenuState getmenustate();

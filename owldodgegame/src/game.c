@@ -1,33 +1,29 @@
 #include "../include/game.h"
 
-Uint32 update(Uint32 ms, void *param)
-{
-  SDL_Event ev;
-  ev.type = SDL_USEREVENT;
-  SDL_PushEvent(&ev);
+Uint32 update(Uint32 ms, void *param) {
+  SDL_Event e;
+  e.type = SDL_USEREVENT;
+  SDL_PushEvent(&e);
   return ms;
 }
 
-void handleinput(Player *player, SDL_Event *e)
-{
-  switch (e->key.keysym.sym)
-  {
-  case SDLK_d:
-  {
-    if (!player->flash.oncd)
+void handleinput(Player *player, SDL_Keycode keycode) {
+  switch (keycode) {
+  case SDLK_d: {
+    if (!player->flash.oncd) // ha nincs töltési időn a képesség
     {
+      player->flash.oncd = true;
       playerflash(player);
     }
-    player->flash.oncd = true;
     break;
   }
   case SDLK_q: // lövedék létrehozása
   {
-    if (!player->missileprops.oncd)
+    if (!player->missileprops.oncd) // ha nincs töltési időn a képesség
     {
+      player->missileprops.oncd = true;
       player->missiles = spawnmissile(player);
     }
-    player->missileprops.oncd = true;
     break;
   }
   case SDLK_s: // játékos mozgásának megállítása
@@ -38,19 +34,14 @@ void handleinput(Player *player, SDL_Event *e)
   }
 }
 
-void gameover()
-{
-  setmainstate(MENU);
-  setsubmenustate(GAMEOVERMENU);
-}
-void game(SDL_Event *e)
-{
+void game() {
   int ms = 10;
   int timer = SDL_AddTimer(ms, update, NULL);
 
-  Rect backgrounddest = {(Point){0, 0}, (Size){1280, 960}};
-  Player player = {.position = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
-                   .destination = {WINDOWWIDTH / 2, WINDOWHEIGHT / 2},
+  Rect backgrounddest = {(Point){0, 0}, (Size){WINDOWWIDTH, WINDOWHEIGHT}};
+
+  Player player = {.position = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
+                   .destination = {WINDOWWIDTH / 2.0f, WINDOWHEIGHT / 2.0f},
 
                    .hitboxradius = 40,
                    .speed = 2.7f,
@@ -58,27 +49,33 @@ void game(SDL_Event *e)
                    .imgsize = {100, 100},
                    .texture = loadimage("resources/player.png"),
 
-                   .flash = (Spell){
-                       .cooldown = 3.0f,
-                       .range = 200.0f,
-                       .oncd = false,
-                       .cdcounter = 3.0f,
-                   },
-                   .missileprops = (Spell){
-                       .cooldown = 1.0f,
-                       .range = 500.0f,
-                       .oncd = false,
-                       .texture = loadimage("resources/missile.png"),
-                       .imgsize = (Size){100, 20},
-                       .speed = 7.5f,
-                   },
+                   .flash =
+                       (Spell){
+                           .cooldown = 3.0f,
+                           .range = 200.0f,
+                           .oncd = false,
+                           .cdcounter = 3.0f,
+                       },
+                   .missileprops =
+                       (Spell){
+                           .cooldown = 1.0f,
+                           .range = 500.0f,
+                           .oncd = true,
+                           .texture = loadimage("resources/missile.png"),
+                           .imgsize = (Size){100, 20},
+                           .speed = 7.5f,
+                       },
                    .missiles = NULL};
 
   EntityNode *fireballs = NULL;
   EntityNode *enemies = NULL;
 
-  SpawnProps fireballprops = {.rate = 150, .lowerlimit = 20, .counter = 0, .incrementer = 1};
-  SpawnProps enemyprops = {.rate = 140, .lowerlimit = 30, .counter = 0, .incrementer = 1};
+  SpawnProps fireballprops = {
+      .rate = 150, .lowerlimit = 20, .counter = 0, .incrementer = 1};
+  SpawnProps enemyprops = {
+      .rate = 140, .lowerlimit = 30, .counter = 0, .incrementer = 1};
+
+  // a tűzgolyók és ellenségek sebességét beállítjuk a nehézség alapján
   setspeedbydiff(&fireballprops, 3.0f);
   setspeedbydiff(&enemyprops, 2.5f);
 
@@ -88,35 +85,31 @@ void game(SDL_Event *e)
   SDL_Texture *fireballtexture = loadimage("resources/fireball.png");
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
-  resetcurrentpoint();
+  resetcurrentpoint(); // minden kör nulla ponttal indul
 
-  renderupdate();
-
-  while (getmainstate() == GAME)
-  {
-    while (SDL_PollEvent(e))
-    {
-      switch (e->type)
-      {
+  SDL_Event e;
+  while (getmainstate() == GAME) {
+    while (SDL_PollEvent(&e)) {
+      switch (e.type) {
       case SDL_MOUSEBUTTONDOWN:
-        if (e->button.button == SDL_BUTTON_RIGHT)
-          player.destination = (Point){.x = e->button.x, .y = e->button.y};
-
+        if (e.button.button == SDL_BUTTON_RIGHT)
+          player.destination = (Point){.x = e.button.x, .y = e.button.y};
         break;
       case SDL_KEYDOWN:
-        handleinput(&player, e);
-
+        handleinput(&player, e.key.keysym.sym);
         break;
 
       case SDL_USEREVENT:
         renderrectangle(background, backgrounddest); // háttér újratöltése
 
-        // új elemek létrehozása
+        // új entitások létrehozása
         if (updatespawnprops(&fireballprops))
-          fireballs = spawnentity(fireballs, fireballtexture, player.position, fireballprops.speed);
+          fireballs = spawnentity(fireballs, fireballtexture, player.position,
+                                  fireballprops.speed);
 
         if (updatespawnprops(&enemyprops))
-          enemies = spawnentity(enemies, enemytexture, player.position, enemyprops.speed);
+          enemies = spawnentity(enemies, enemytexture, player.position,
+                                enemyprops.speed);
 
         // mozgatás
 
@@ -132,43 +125,33 @@ void game(SDL_Event *e)
 
         // ütközések
 
-        if (checkcollisioncircles(&player, fireballs) || checkcollisioncircles(&player, enemies))
-          gameover();
+        // ha ütközött a játékos egy ellenséggel, akkor a körnek vége, tehát
+        // átvált kör végi menü nézetre a játék
+        if (checkcollisioncircles(&player, fireballs) ||
+            checkcollisioncircles(&player, enemies)) {
+          setmainstate(MENU);
+          setsubmenustate(GAMEOVERMENU);
+        }
         checkcollisionmissileenemy(&player, &enemies);
 
         // játékos képességek
 
-        if (player.flash.oncd)
-        {
-          player.flash.cdcounter -= ms / 1000.0;
-          if (player.flash.cdcounter <= 0.0f)
-          {
-            player.flash.cdcounter = player.flash.cooldown;
-            player.flash.oncd = false;
-          }
-        }
-        if (player.missileprops.oncd)
-        {
-          player.missileprops.cdcounter -= ms / 1000.0;
-          if (player.missileprops.cdcounter <= 0.0f)
-          {
-            player.missileprops.cdcounter = player.missileprops.cooldown;
-            player.missileprops.oncd = false;
-          }
-        }
-        showcooldowns(&player);
+        updatespell(&player.flash, ms);
+        updatespell(&player.missileprops, ms);
 
-        // időmérés
+        // játékfelületi elemek
 
-        showseconds(seconds);
         seconds += ms / 1000.0;
 
-        // mivel a seconds változó mindig minimum 0.01-el növekszik, ezért elég 10^2-el eltolni, így biztosan egész számot kapunk
-        // majd 100-al osztva, megkapjuk, hogy eltelt-e egy másodperc
-        if ((int)(seconds * 100) % 100 == 0)
-        {
+        // mivel a seconds változó minimum 0.01-el növekszik, ezért elég
+        // 10^2-el eltolni, így biztosan egész számot kapunk majd 100-al osztva,
+        // megkapjuk, hogy eltelt-e egy másodperc
+        if ((int)(seconds * 100) % 100 == 0) {
           incrementcurrentscore(50);
         }
+
+        showcooldowns(&player);
+        showseconds(seconds);
         showpoints();
 
         break;
@@ -181,11 +164,13 @@ void game(SDL_Event *e)
     // megjelenítő frissítése
     renderupdate();
   }
+
   // felszabadítások
 
   freeentities(fireballs);
   freeentities(enemies);
-  // freemissiles
+  freemissiles(&player);
+
   SDL_RemoveTimer(timer);
 
   SDL_DestroyTexture(background);

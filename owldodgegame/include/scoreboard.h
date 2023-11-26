@@ -18,7 +18,7 @@ typedef struct ScoreNode
 } ScoreNode;
 
 void loadscoresfromfile(char *filename);
-void savescorestofile(char *filename);
+void savescoreboardtofile(char *filename);
 ScoreNode *getscores();
 double getcurrentpoint();
 void incrementcurrentscore(int point);

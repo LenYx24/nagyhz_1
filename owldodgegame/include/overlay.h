@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "math_helper.h"
-#include "macros.h"
+#include "state.h"
 #include "render.h"
 #include "entity.h"
 #include "scoreboard.h"

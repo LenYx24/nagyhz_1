@@ -6,9 +6,9 @@
 #include <stdbool.h>
 #include <time.h>
 #include <stdlib.h>
-
 #include <math.h>
-#include "macros.h"
+
+#include "state.h"
 
 typedef struct Point
 {

@@ -18,7 +18,7 @@ typedef struct Spell
   bool oncd;
   SDL_Texture *texture;
   Size imgsize;
-  int speed;
+  double speed;
 } Spell;
 
 typedef struct Missile
@@ -76,7 +76,7 @@ typedef struct SpawnProps
   int lowerlimit;
   int counter;
   int incrementer;
-  int speed;
+  double speed;
 } SpawnProps;
 
 void moveplayer(Player *player);
@@ -84,6 +84,7 @@ void moveplayer(Player *player);
 EntityNode *moveentities(EntityNode *entities, bool rotatedimage);
 void entitychangedir(EntityNode *entities, Point playerpos);
 EntityNode *spawnentity(EntityNode *list, SDL_Texture *t, Point playerpos, double speed);
+void updatespell(Spell *spell, int ms);
 void freeentities(EntityNode *entities);
 
 MissileNode *movemissiles(Player *player);
@@ -95,6 +96,6 @@ void checkcollisionmissileenemy(Player *player, EntityNode **enemies);
 
 void playerflash(Player *player);
 
-void setspeedbydiff(SpawnProps *p, int basespeed);
+void setspeedbydiff(SpawnProps *p, double basespeed);
 bool updatespawnprops(SpawnProps *p);
 #endif

@@ -36,7 +36,7 @@ void loadscoresfromfile(char *filename)
 
     fclose(f);
 }
-void savescorestofile(char *filename)
+void savescoreboardtofile(char *filename)
 {
     FILE *f;
     f = fopen(filename, "w");

@@ -8,7 +8,6 @@
 #include "render.h"
 #include "state.h"
 #include "math_helper.h"
-#include "macros.h"
 #include "scoreboard.h"
 
 typedef struct Button
@@ -20,5 +19,5 @@ typedef struct Button
     SDL_Color bgcolor;
 } Button;
 
-void menu(SDL_Event *e);
+void menu();
 #endif
