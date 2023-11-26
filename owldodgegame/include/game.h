@@ -20,6 +20,17 @@
 #include "render.h"
 #include "scoreboard.h"
 #include "state.h"
+/**
+ * @brief tárolja azokat az adatokat, amelyek szükségesek ahhoz hogy a
+ * játékosnak visszajelezze azt ahova kattintott
+ *
+ */
+typedef struct showposclickfeedback {
+  int counter;
+  int limit;
+  bool show;
+  Point pos;
+} showposclickfeedback;
 /*
  * @brief Levezényel egy kört a játékon belül
  * létrehozza a pályát, játékost, és ellenségeket, majd a render modult

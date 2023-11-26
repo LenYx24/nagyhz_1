@@ -96,6 +96,9 @@ void game() {
   SDL_Texture *fireballtexture = loadimage("resources/fireball.png");
   SDL_Texture *enemytexture = loadimage("resources/enemy.png");
 
+  showposclickfeedback mouseclickfeedback = {
+      .counter = 0, .limit = 10, .show = false, .pos = {0, 0}};
+
   resetcurrentpoint(); // minden kör nulla ponttal indul
 
   SDL_Event e;
@@ -103,8 +106,13 @@ void game() {
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
       case SDL_MOUSEBUTTONDOWN:
-        if (e.button.button == SDL_BUTTON_RIGHT)
-          player.destination = (Point){.x = e.button.x, .y = e.button.y};
+        if (e.button.button == SDL_BUTTON_RIGHT) {
+          Point mousepos = (Point){.x = e.button.x, .y = e.button.y};
+          player.destination = mousepos;
+          mouseclickfeedback.pos = mousepos;
+          mouseclickfeedback.counter = 0;
+          mouseclickfeedback.show = true;
+        }
         break;
       case SDL_KEYDOWN:
         handleinput(&player, e.key.keysym.sym);
@@ -112,6 +120,16 @@ void game() {
 
       case SDL_USEREVENT:
         renderrectangle(background, backgrounddest); // háttér újratöltése
+
+        // egérgomb kattintás helyének mutatása
+
+        if (mouseclickfeedback.show &&
+            mouseclickfeedback.counter <= mouseclickfeedback.limit) {
+          mouseclickfeedback.counter++;
+          if (mouseclickfeedback.counter >= mouseclickfeedback.limit)
+            mouseclickfeedback.show = false;
+          rendercircle(mouseclickfeedback.pos, 7, c_green);
+        }
 
         // új entitások létrehozása
         if (updatespawnprops(&fireballprops)) {

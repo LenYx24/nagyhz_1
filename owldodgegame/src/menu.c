@@ -1,9 +1,10 @@
 #include "../include/menu.h"
-#define MAINMENU_BTARRSIZE 6
+#define MAINMENU_BTARRSIZE 7
 #define HELPMENU_BTARRSIZE 1
 #define GAMEOVERMENU_BTARRSIZE 5
 
 static Size defaultbtsize = {200, 40};
+static char playername[50 + 1] = "\0";
 
 void drawbuttons(Button *buttons, int size) {
   for (int i = 0; i < size; i++) {
@@ -29,6 +30,16 @@ void setmediummode(Button *b) {
 void sethardmode(Button *b) {
   b->selected = true;
   setdifficulty(HARD);
+}
+void newname() {
+  rendertext((Point){20, 20}, c_white,
+             "Add meg az uj felhasznaloneved (maximum 50 karakter): ");
+  char currentname[31 + 51];
+  sprintf(currentname, "jelenlegi felhasznaloneved: %s", playername);
+  rendertext((Point){20, 20}, c_white, currentname);
+  size_t length = 50;
+  SDL_Rect pos = {.x = 20, .y = 50, .w = 200, .h = 30};
+  input_text(playername, length, pos, c_btbg, c_white);
 }
 void back() { setsubmenustate(STARTMENU); }
 void quit() { setmainstate(QUIT); }
@@ -76,20 +87,22 @@ void handleclick(SDL_Event *e, Button *buttons, int size) {
   }
 }
 void scoreboard() {
-  int col1 = 500;
+  int col1 = 700;
   int px = 100;
-  int height = 400;
+  int height = 10;
   int py = 40;
+
   rendertext((Point){col1, height}, c_white, "helyezes");
   rendertext((Point){col1 + px, height}, c_white, "pontszam");
   rendertext((Point){col1 + 2 * px, height}, c_white, "felhasznalonev");
+
   height += py;
   int i = 1;
   for (ScoreNode *cr = getscores(); cr != NULL; cr = cr->next) {
     char place[20];
-    sprintf(place, "%d", i);
+    sprintf(place, "%d.", i);
     char point[20];
-    sprintf(point, "%lf", cr->score.points);
+    sprintf(point, "%.2lf", cr->score.points);
     rendertext((Point){col1, height}, c_white, place);
     rendertext((Point){col1 + px, height}, c_white, point);
     rendertext((Point){col1 + 2 * px, height}, c_white, cr->score.playername);
@@ -105,12 +118,15 @@ void startmenu() {
       {{bcol(0), brow(2)}, "Konnyu", seteasymode},
       {{bcol(1), brow(2)}, "Kozepes", setmediummode},
       {{bcol(2), brow(2)}, "Nehez", sethardmode},
-      {{bcol(0), brow(3)}, "Kilepes", quit},
+      {{bcol(0), brow(3)}, "Uj nev", newname},
+      {{bcol(0), brow(4)}, "Kilepes", quit},
   };
+  // a tömbben melyik elemtől kezdődnek a nehézséget szabályzó gombok
   int offset = 2;
   drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
-  renderupdate();
+  scoreboard();
   SDL_Event e;
+  renderupdate();
   while (getmenustate() == STARTMENU && getmainstate() == MENU) {
     while (SDL_PollEvent(&e)) {
       resetbtcolors(buttons, MAINMENU_BTARRSIZE);
@@ -143,8 +159,9 @@ void helpmenu() {
   rendertext((Point){350, 200}, c_white, "D kepesseg");
   rendertext((Point){370, 230}, c_white,
              "Egy kisebb tavolsagra teleportalja a karaktert.");
-  renderupdate();
+
   SDL_Event e;
+  renderupdate();
   while (getmenustate() == HELPMENU && getmainstate() == MENU) {
     while (SDL_PollEvent(&e)) {
       resetbtcolors(buttons, HELPMENU_BTARRSIZE);
@@ -166,30 +183,33 @@ void helpmenu() {
   }
 }
 
-static char playername[50 + 1];
-
 void gameovermenu() {
-  Button buttons[MAINMENU_BTARRSIZE] = {
+  Button buttons[GAMEOVERMENU_BTARRSIZE] = {
       {{bcol(0), brow(0)}, "Ujrakezdes", newgame},
       {{bcol(0), brow(1)}, "Konnyu", seteasymode},
       {{bcol(1), brow(1)}, "Kozepes", setmediummode},
       {{bcol(2), brow(1)}, "Nehez", sethardmode},
       {{bcol(0), brow(2)}, "Vissza", back},
   };
+
+  // a tömbben melyik elemtől kezdődnek a nehézséget szabályzó gombok
   int diffbtoffset = 1;
+
+  // ha üres a név mező akkor kell bekérni a felhasználó nevét
   if (strlen(playername) == 0) {
-    rendertext((Point){20, 20}, c_white, "Nev: ");
+    rendertext((Point){20, 20}, c_white,
+               "Add meg a felhasznaloneved (maximum 50 karakter): ");
     size_t length = 50;
     SDL_Rect pos = {.x = 20, .y = 50, .w = 200, .h = 30};
     bool inputsaved = input_text(playername, length, pos, c_btbg, c_white);
     if (inputsaved) {
       insertnewscore(playername);
     }
-    renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, c_menubg);
   } else {
     drawbuttons(buttons, GAMEOVERMENU_BTARRSIZE);
     insertnewscore(playername);
   }
+  renderbox((Point){0, 0}, (Point){WINDOWWIDTH, WINDOWHEIGHT}, c_menubg);
   scoreboard();
   renderupdate();
   SDL_Event e;

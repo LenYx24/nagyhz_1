@@ -89,3 +89,9 @@ double getangle(Vector2 v) {
   }
   return degrees;
 }
+Vector2 rotatevectorbyangle(Vector2 v, double angle) {
+  Vector2 newvector;
+  newvector.x = cos(angle) * v.x - sin(angle) * v.y;
+  newvector.y = sin(angle) * v.x + cos(angle) * v.y;
+  return newvector;
+}

@@ -146,5 +146,12 @@ int vectorlength(Vector2 v);
  * megadni a forgatás értékét
  */
 double getangle(Vector2 v);
-
+/**
+ * @brief a kapott vektort elfordítja adott szöggel
+ *
+ * @param v a forgatni kívánt vektor
+ * @param angle a szög
+ * @return Vector2 az elforgatott vektor
+ */
+Vector2 rotatevectorbyangle(Vector2 v, double angle);
 #endif

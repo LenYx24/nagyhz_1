@@ -33,6 +33,7 @@ void playerflash(Player *player) {
     destpos = (Point){destx, desty};
   }
   player->character.position = destpos;
+  player->destination = destpos;
 }
 EntityNode *moveentities(EntityNode *entities, bool rotatedimage) {
   EntityNode *preventity = NULL;
@@ -78,9 +79,19 @@ void entitychangedir(EntityNode *entities, Point playerpos) {
 
 EntityNode *spawnentity(EntityNode *list, Point playerpos, GameObject props) {
   EntityNode *newentity = (EntityNode *)malloc(sizeof(EntityNode));
+  if (newentity == NULL) {
+    SDL_Log("hiba történt a memóriafoglalás során");
+    setmainstate(QUIT);
+    return list;
+  }
   newentity->next = list;
   Point spawnpoint = randomspawnpoint();
-  Vector2 dest = normalizevector(vectorfromtwopoints(spawnpoint, playerpos));
+  Vector2 dest = vectorfromtwopoints(spawnpoint, playerpos);
+  double max = 11.0f;
+  double offset = -5.0f;
+  double randomangle = max * ((double)rand() / RAND_MAX) + offset;
+  double rad = randomangle * PI / 180.0f;
+  dest = normalizevector(rotatevectorbyangle(dest, rad));
 
   GameObject e = props;
   e.position = spawnpoint;
@@ -110,6 +121,11 @@ MissileNode *spawnmissile(Player *player) {
   SDL_GetMouseState(&x, &y);
   Point mousepos = {(double)x, (double)y};
   MissileNode *newmissile = (MissileNode *)malloc(sizeof(MissileNode));
+  if (newmissile == NULL) {
+    SDL_Log("hiba történt a memóriafoglalás során");
+    setmainstate(QUIT);
+    return player->missiles;
+  }
   newmissile->next = player->missiles;
   Vector2 dir = normalizevector(vectorfromtwopoints(
       player->character.position, (Point){mousepos.x, mousepos.y}));

@@ -12,6 +12,10 @@ void loadscoresfromfile(char *filename) {
       char row[256];
       if (fgets(row, 256, f) != NULL) {
         ScoreNode *s = (ScoreNode *)malloc(sizeof(ScoreNode));
+        if (s == NULL) {
+          SDL_Log("hiba történt a memóriafoglalás során");
+          return;
+        }
         // adatbetöltés
         double pts;
         sscanf(row, "%lf;%s", &pts, s->score.playername);
@@ -64,22 +68,32 @@ void incrementcurrentscore(int point) {
 }
 void insertnewscore(char *name) {
   ScoreNode *newnode = (ScoreNode *)malloc(sizeof(ScoreNode));
+  if (newnode == NULL) {
+    SDL_Log("hiba történt");
+    setmainstate(QUIT);
+    return;
+  }
   newnode->score = (Score){currentpoint};
   strcpy(newnode->score.playername, name);
+
   newnode->next = NULL;
   newnode->prev = NULL;
+
   if (scores == NULL) {
     scores = newnode;
   } else {
     bool inserted = false;
+    // ha nem nulla a scores, akkor legalább egy elem már van
     int numofscores = 1;
+
+    // megkeressük az utolsó elemet
     ScoreNode *last = scores;
     while (last->next != NULL) {
       numofscores++;
       last = last->next;
     }
-    for (ScoreNode *current = scores; current != NULL;
-         current = current->next) {
+    ScoreNode *current = scores;
+    while (current != NULL) {
       if (current->score.points < currentpoint) {
         if (current->prev == NULL) // ha a jelenlegi elemnek nincs előző eleme,
                                    // akkor a lista elejére szúrúnk be
@@ -103,12 +117,17 @@ void insertnewscore(char *name) {
         }
         break;
       }
+      current = current->next;
     }
-    if (!inserted &&
-        numofscores < 5) // ha nem szúrtunk be az utolsóig, de még van hely a
-                         // végén, akkor oda kerül az új érték
-    {
-      last->next = newnode;
+    if (!inserted) {
+      // ha nem szúrtunk be az utolsóig, de még van hely a
+      // végén, akkor oda kerül az új érték
+      if (numofscores < 5) {
+        last->next = newnode;
+      } else { // ha nem szúrtunk be és már 5 elem van, akkor a jelenlegi elemet
+               // nem használjuk
+        free(newnode);
+      }
     }
   }
 }
