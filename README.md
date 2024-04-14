@@ -1,9 +1,8 @@
 # This is the game I made for my Basics of Programming 1 class.
 
-It's written in C, I used SDL2 for the graphics and some more SDL2 helper libraries.
+It's written in C, I used SDL2 for the graphics and SDL2 helper libraries (SDL_image,gfx,ttf).
 
-I got the idea for this game, from a popular website: [loldodgegame](www.loldodgegame.com), and I basically copied the idea with a couple of twists.
-
+I got the idea for this game, from a popular website: [loldodgegame](www.loldodgegame.com), and I basically copied the game and simplified it a bit.
 
 ## How to run
 
@@ -14,6 +13,6 @@ You can find out how to install SDL2 and compile this game from the site above. 
 (In the future I might update this repo, and create a makefile)
 
 ``
-gcc owldodgegame/src/main.c -o ${PROGRAM_NAME} `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
+gcc owldodgegame/src/*.c owldodgegame/src/*.h -o ${PROGRAM_NAME} `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 ``
-Replace PROGRAM_NAME with the name you want your binary to be.
+Replace PROGRAM_NAME with the name you want your binary to be, then run the file.
