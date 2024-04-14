@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
   char *title = "bagolyjatek";
   createwindow(windowsize, title);
   initfont("./fonts/LiberationSerif-Regular.ttf", 32);
-
+  
   char filename[] = "scoreboard.txt";
   loadscoresfromfile(filename);
 

@@ -29,6 +29,8 @@ void createwindow(Size windowsize, char *title) {
     SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
     exit(1);
   }
+  SDL_SetWindowResizable(window,
+                            SDL_TRUE);
   SDL_RenderClear(renderer);
 }
 void initfont(char *pathname, int size) {

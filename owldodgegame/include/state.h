@@ -7,7 +7,7 @@
  * A belső state változó alapértelmezett értéke a MENU főállapot és a STARTMENU
  * almenüállapot. A nehézség alapértelmezett értéke EASY
  */
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 #include <stdlib.h>
 /**
  * @brief A főállapotot leíró felsorolt típus
