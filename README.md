@@ -14,7 +14,7 @@ You can find out how to install SDL2 and compile this game from the site above. 
 
 ```
 cd owldodgegame &&
-gcc owldodgegame/src/*.c owldodgegame/include/*.h -o owldodgegame `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
+gcc ./src/*.c ./include/*.h -o owldodgegame `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 ```
 
 Replace "owldodgegame" after the -o flag with the binary name you want to create, then run the file.
