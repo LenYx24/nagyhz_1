@@ -8,7 +8,7 @@ I got the idea for this game, from a popular website: [loldodgegame](www.loldodg
 
 As I wasn't familiar with makefiles at the time, I used one gcc command found at the official site for this class: [infoc](https://infoc.eet.bme.hu/sdl_telepito/)
 
-You can find out how to install SDL2 and compile this game from the site above. For linux it's as simple as downloading the sdl2 packages from your package manager.
+You can find out how to install SDL2 and compile this game from the site above. For linux it's as simple as downloading the sdl2 packages from your package manager. ([help](https://wiki.libsdl.org/SDL2/Installation))
 
 (In the future I might update this repo, and create a makefile)
 
@@ -18,3 +18,5 @@ gcc owldodgegame/src/*.c owldodgegame/include/*.h -o owldodgegame `sdl2-config -
 ```
 
 Replace "owldodgegame" after the -o flag with the binary name you want to create, then run the file.
+
+You can now also use cmake to generate a makefile, and make to generate the binary.
