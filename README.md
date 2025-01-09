@@ -1,4 +1,4 @@
-# This is the game I made for my Basics of Programming 1 class.
+# This is the game I developed for my Basics of Programming 1 class.
 
 It's written in C, I used SDL2 for the graphics and SDL2 helper libraries (SDL_image,gfx,ttf).
 
@@ -13,7 +13,8 @@ You can find out how to install SDL2 and compile this game from the site above. 
 (In the future I might update this repo, and create a makefile)
 
 ``
-cd owldodgegame && 
+cd owldodgegame &&  
+
 gcc owldodgegame/src/*.c owldodgegame/include/*.h -o ${PROGRAM_NAME} `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 ``
 
